@@ -1,0 +1,535 @@
+/* ==========================================================================
+   Hero — "Great product. The website's holding the line down."
+   Figma: New-Vertical-Effects › Hero Banner Page Load Effect (6:520)
+   ========================================================================== */
+
+@font-face {
+  font-family: "Geist";
+  src: url("../assets/fonts/geist-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "P22 Mackinac Pro";
+  src: url("../assets/fonts/P22%20Mackinac%20Pro/P22MackinacPro-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "P22 Mackinac Pro";
+  src: url("../assets/fonts/P22%20Mackinac%20Pro/P22MackinacPro-Bold_16.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --hero-green: #3D8956;
+  --hero-text: #130E0D;
+  --hero-muted: #707070;
+  --hero-rule: #F2F2F2;
+  --hero-pill-bg: #F4F4F4;
+
+  --hero-serif: "P22 Mackinac Pro", Georgia, serif;
+  --hero-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--hero-text);
+  font-family: var(--hero-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hidden until GSAP has set the start state (hero.js reveals it) */
+.hero-js .hero { visibility: hidden; }
+
+/* Demo-only spacer */
+.demo-spacer {
+  display: grid;
+  place-items: center;
+  height: 80vh;
+  border-top: 1px solid var(--hero-rule);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bbb;
+}
+
+.hero {
+  position: relative;
+  background: #fff;
+  overflow-x: clip;
+}
+
+.hero_container {
+  max-width: 1008px; /* 960 content + gutters, as in the 1160 frame */
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar
+   -------------------------------------------------------------------------- */
+.hero_nav {
+  position: relative;
+  padding-top: 20px;
+}
+
+.hero_nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 47px;
+  padding-bottom: 19px;
+}
+
+.hero_nav-rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--hero-rule);
+}
+
+.hero_brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--hero-text);
+  text-decoration: none;
+}
+
+.hero_logo {
+  position: relative;
+  width: 31px;
+  aspect-ratio: 38.7037 / 34.8387;
+}
+
+.hero_logo img { position: absolute; display: block; }
+/* Figma insets → left/top/size (absolute <img> won't stretch between insets) */
+.hero_logo-top    { left: 70.43%; top: 7.41%;  width: 22.8%; height: 19.4%; }
+.hero_logo-mid    { left: 5.83%;  top: 33.55%; width: 87.4%; height: 26.15%; }
+.hero_logo-bottom { left: 5.83%;  top: 66.45%; width: 87.4%; height: 26.14%; }
+
+.hero_brand-name {
+  font: 700 17px/23px var(--hero-serif);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.hero_links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero_link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: -0.004em;
+  color: var(--hero-text);
+  text-decoration: none;
+}
+
+.hero_link img { display: block; }
+
+.hero_menu {
+  display: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.hero_menu img { display: block; }
+
+/* --------------------------------------------------------------------------
+   Copy + actions
+   -------------------------------------------------------------------------- */
+.hero_body {
+  padding-top: 68px;
+  padding-bottom: 41px;
+}
+
+.hero_title {
+  max-width: 619px;
+  margin: 0;
+  font: 500 52px/60px var(--hero-serif);
+  letter-spacing: -0.06em;
+}
+
+.hero_title-accent { color: var(--hero-green); }
+
+.hero_lede {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: -0.004em;
+  color: var(--hero-muted);
+}
+
+.hero_lede strong {
+  font-weight: 500;
+  color: var(--hero-text);
+}
+
+.hero_actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 41px; /* 40 + the 1px taller lede box in Figma (mixed 22/23 line heights) */
+}
+
+.hero_btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 64px;
+  font: 600 15px/24px var(--hero-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  /* Hover uses `translate`, not `transform`: GSAP owns `transform` for the intro,
+     and a CSS transition on it would skew the values GSAP reads back */
+  transition: translate 0.2s ease, background-color 0.2s ease;
+}
+
+.hero_btn--primary {
+  gap: 10px;
+  background: var(--hero-green);
+  color: #fff;
+}
+
+.hero_btn--outline {
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--hero-text);
+  color: var(--hero-text);
+}
+
+.hero_btn:hover { translate: 0 -1px; }
+.hero_btn--primary:hover { background: #357a4c; }
+.hero_btn:focus-visible { outline: 2px solid var(--hero-green); outline-offset: 3px; }
+.hero_btn--outline img { display: block; }
+
+/* Send icon: the Figma polygon is drawn pointing up and rotated 90° */
+.hero_btn-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 15.333px;
+}
+
+.hero_btn-send > span {
+  position: relative;
+  flex: none;
+  width: 15.333px;
+  height: 16px;
+  transform: rotate(90deg);
+}
+
+.hero_btn-send img {
+  position: absolute;
+  left: 9.9%;
+  top: 8.21%;
+  display: block;
+  width: 80.2%;
+  height: 79.63%;
+}
+
+.hero_actions-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1px;
+  height: 12px;
+}
+
+.hero_actions-divider img {
+  flex: none;
+  display: block;
+  transform: rotate(90deg);
+}
+
+/* --------------------------------------------------------------------------
+   Graph
+   One unit: --u = 1 Figma px inside the Graph frame (962 × 493 desktop,
+   340 × 298 mobile). Every piece is placed with --x / --y (and sized with
+   --w / --h / --l) in those px, so the whole chart scales as one, while
+   hairlines stay a crisp 1px. Mobile only swaps the numbers.
+   -------------------------------------------------------------------------- */
+.hero_graph {
+  --gw: 962;
+  --gh: 493;
+  position: relative;
+  width: calc(100% * 962 / 960); /* the frame overhangs the content by 2px */
+  aspect-ratio: 962 / 493;
+  margin-top: -5%;               /* its top lines up with the buttons (330px) */
+  container-type: inline-size;
+  pointer-events: none;          /* never block the buttons it sits beside */
+}
+
+/* Resolved on each child, so 100cqi is the graph's width */
+.hero_g {
+  --u: calc(100cqi / var(--gw));
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+}
+
+/* Grid */
+.hero_baseline {
+  --x: 2; --y: 492; --w: 960;
+  width: calc(var(--w) * var(--u));
+  height: 1px;
+  background: var(--hero-rule);
+}
+
+.hero_rule {
+  --y: 237; --h: 256;
+  width: 1px;
+  height: calc(var(--h) * var(--u));
+}
+
+.hero_rule--axis { --x: 0; margin-left: -1px; background: var(--hero-rule); }
+.hero_rule--dashed { background: repeating-linear-gradient(to bottom, var(--hero-rule) 0 5px, transparent 5px 10px); }
+.hero_rule--1 { --x: 162; }
+.hero_rule--2 { --x: 322; }
+.hero_rule--3 { --x: 482; }
+.hero_rule--4 { --x: 642; }
+.hero_rule--5 { --x: 802; }
+
+/* Column highlights: gradient fill + a solid bar on the baseline */
+.hero_col {
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+}
+
+.hero_col--today { --x: 482; --y: 397; --w: 159.5; --h: 95; --bar: #4A4A4A; --tint: rgb(72 72 72 / 0.08); --tint-top: rgb(255 255 255 / 0); }
+.hero_col--goal  { --x: 802; --y: 76;  --w: 157;   --h: 416; --bar: var(--hero-green); --tint: rgb(61 137 86 / 0.08); --tint-top: rgb(61 137 86 / 0.008); }
+
+.hero_col-fill,
+.hero_col-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.hero_col-fill {
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(var(--tint-top), var(--tint));
+}
+
+.hero_col-bar {
+  bottom: -0.5px;
+  height: 1px;
+  background: var(--bar);
+}
+
+/* Connectors: 1px line ending in a dot, both at 20% ink like the design */
+.hero_pin {
+  width: 1px;
+  height: calc(var(--l) * var(--u));
+  margin-left: -0.5px;
+  background: var(--hero-text);
+  opacity: 0.2;
+}
+
+.hero_pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: calc(5.333 * var(--u));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: inherit;
+  transform: translate(-50%, 50%);
+}
+
+.hero_pin--competitor { --x: 242; --y: 254; --l: 28; }
+.hero_pin--today      { --x: 562; --y: 250; --l: 129; }
+.hero_pin--goal       { --x: 880; --y: 25;  --l: 32; }
+
+/* The angled line */
+.hero_lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-width: 1px;
+}
+
+.hero_lines path { vector-effect: non-scaling-stroke; }
+.hero_lines--mobile { display: none; }
+
+/* Competitors' flat stretch */
+.hero_segment {
+  --x: 162; --y: 300.48; --w: 159;
+  width: calc(var(--w) * var(--u));
+  height: 1px;
+  margin-top: -0.5px;
+  background: #4A4A4A;
+}
+
+/* Markers: filled circle, 2-unit white ring, hexagon in the middle */
+.hero_marker {
+  --s: 20;
+  --fill: #E9E9E9;
+  --hex: #4A4A4A;
+  width: calc(var(--s) * var(--u));
+  height: calc(var(--s) * var(--u));
+  border: calc(var(--s) / 10 * var(--u)) solid #fff;
+  border-radius: 50%;
+  background: var(--fill);
+}
+
+.hero_marker::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--s) * 0.3464 * var(--u));
+  height: calc(var(--s) * 0.4 * var(--u));
+  background: var(--hex);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  transform: translate(-50%, -50%);
+}
+
+.hero_marker--c1    { --x: 218; --y: 290; }
+.hero_marker--c2    { --x: 232; --y: 290; }
+.hero_marker--c3    { --x: 246; --y: 290; }
+.hero_marker--today { --x: 552; --y: 387; --hex: var(--hero-text); }
+.hero_marker--goal  { --x: 871; --y: 65;  --fill: #D2E4D8; --hex: var(--hero-green); }
+.hero_marker--pulse { opacity: 0; }
+.hero_marker--pulse::after { content: none; }
+
+/* Labels */
+.hero_pill {
+  padding: 0.3333em 1em;
+  border-radius: 36px;
+  background: var(--hero-pill-bg);
+  font-size: calc(12 * var(--u));
+  line-height: 1.6667em;
+  letter-spacing: -0.004em;
+  color: rgb(19 14 13 / 0.7);
+  white-space: nowrap;
+}
+
+.hero_pill--competitor { --x: 168; --y: 229; }
+.hero_pill--today      { --x: 506; --y: 225; }
+.hero_pill--goal {
+  --x: 814;
+  --y: 0;
+  background: var(--hero-green);
+  font-weight: 500;
+  line-height: 1.3333em;
+  letter-spacing: 0;
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile (382 frame)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .hero_nav { padding-top: 24px; }
+  .hero_nav-inner { height: 43px; padding-bottom: 20px; }
+
+  .hero_logo { width: 23px; aspect-ratio: 23 / 20; }
+  .hero_brand { gap: 6px; }
+  .hero_brand-name { font-size: 18px; }
+
+  .hero_links { display: none; }
+  .hero_menu { display: block; }
+
+  .hero_body { padding-top: 48px; padding-bottom: 44px; }
+
+  .hero_title {
+    max-width: 334px;
+    font-size: 36px;
+    line-height: 42px;
+    letter-spacing: -0.04em;
+  }
+
+  .hero_lede {
+    max-width: 334px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .hero_actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 35px; /* 32 + the taller lede box in Figma */
+  }
+
+  .hero_actions-divider { display: none; }
+
+  /* Graph: same pieces, mobile frame numbers */
+  .hero_graph {
+    --gw: 340;
+    --gh: 298;
+    width: calc(100% * 340 / 334);
+    aspect-ratio: 340 / 298;
+    margin-top: 47px;
+  }
+
+  .hero_baseline { --x: 0; --y: 297; --w: 334; }
+  .hero_rule { --y: 156; --h: 142; }
+  .hero_rule--axis { --x: 16; }
+  .hero_rule--1 { --x: 76; }
+  .hero_rule--2 { --x: 136; }
+  .hero_rule--3 { --x: 196; }
+  .hero_rule--4 { --x: 256; }
+  .hero_rule--5 { display: none; }
+
+  .hero_col--today { --x: 135; --y: 240; --w: 60; --h: 58; --bar: #5B5B5B; }
+  .hero_col--goal  { --x: 256; --y: 43;  --w: 62; --h: 255; }
+
+  .hero_pin--competitor { --x: 65;  --y: 155; --l: 16; }
+  .hero_pin--today      { --x: 166; --y: 106; --l: 118; }
+  .hero_pin--goal       { --x: 287; --y: 15;  --l: 18; }
+
+  .hero_lines--desktop { display: none; }
+  .hero_lines--mobile { display: block; }
+
+  .hero_segment { --x: 35; --y: 180.3; --w: 55; background: #5B5B5B; }
+
+  .hero_marker { --s: 12; --hex: #242424; }
+  .hero_marker--c1    { --x: 50;  --y: 175; }
+  .hero_marker--c2    { --x: 59;  --y: 175; }
+  .hero_marker--c3    { --x: 68;  --y: 175; }
+  .hero_marker--today { --x: 160; --y: 230; --hex: var(--hero-text); }
+  .hero_marker--goal  { --x: 281; --y: 38;  --hex: var(--hero-green); }
+
+  .hero_pill {
+    padding: 0.4444em 1.3333em;
+    font-size: calc(9 * var(--u));
+    line-height: 1.3333em;
+    letter-spacing: 0;
+  }
+
+  .hero_pill--competitor { --x: 8;   --y: 135; }
+  .hero_pill--today      { --x: 121; --y: 88; }
+  .hero_pill--goal       { --x: 233; --y: 0; }
+}

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hero Section</title>
+  <!-- Hide the hero until GSAP has set its start state (no flash of the final frame) -->
+  <script>document.documentElement.classList.add("hero-js");</script>
+  <link rel="preload" href="../assets/fonts/geist-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/P22%20Mackinac%20Pro/P22MackinacPro-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="hero.css">
+</head>
+<body>
+
+  <header class="hero" data-hero>
+
+    <!-- Navbar -->
+    <nav class="hero_nav" data-hero-nav>
+      <div class="hero_container hero_nav-inner">
+        <a href="#" class="hero_brand" data-hero-nav-item>
+          <span class="hero_logo" aria-hidden="true">
+            <img class="hero_logo-top" src="assets/logo-top.svg" alt="">
+            <img class="hero_logo-mid" src="assets/logo-mid.svg" alt="">
+            <img class="hero_logo-bottom" src="assets/logo-bottom.svg" alt="">
+          </span>
+          <span class="hero_brand-name">New Vertical</span>
+        </a>
+
+        <ul class="hero_links">
+          <li data-hero-nav-item>
+            <a href="#" class="hero_link">Services <img src="assets/icon-plus.svg" width="12" height="12" alt=""></a>
+          </li>
+          <li data-hero-nav-item><a href="#" class="hero_link">Works</a></li>
+          <li data-hero-nav-item><a href="#" class="hero_link">Audits</a></li>
+          <li data-hero-nav-item><a href="#" class="hero_link">About Us</a></li>
+        </ul>
+
+        <button class="hero_menu" type="button" aria-label="Open menu" data-hero-nav-item>
+          <img src="assets/icon-menu.svg" width="20" height="20" alt="">
+        </button>
+      </div>
+      <span class="hero_nav-rule" data-hero-nav-rule aria-hidden="true"></span>
+    </nav>
+
+    <div class="hero_container hero_body">
+
+      <h1 class="hero_title" data-hero-title>
+        <span class="hero_title-accent">Great product.</span> The website's holding the line down.
+      </h1>
+
+      <p class="hero_lede" data-hero-fade>
+        We redesign your site to climb — <strong>more signups,</strong> and <strong>a company that finally looks its size.</strong>
+      </p>
+
+      <div class="hero_actions">
+        <a href="#" class="hero_btn hero_btn--primary" data-hero-btn>
+          Book a Strategy Call
+          <span class="hero_btn-send" aria-hidden="true"><span><img src="assets/icon-send.svg" alt=""></span></span>
+        </a>
+        <span class="hero_actions-divider" aria-hidden="true" data-hero-btn><img src="assets/btn-divider.svg" alt=""></span>
+        <a href="#" class="hero_btn hero_btn--outline" data-hero-btn>
+          Run the Operator Test on your site
+          <img src="assets/icon-caret-right.svg" width="16" height="16" alt="">
+        </a>
+      </div>
+
+      <!-- ==================================================================
+           Graph. Plain HTML; only the angled line is SVG (one per breakpoint).
+           Positions are Figma px inside the Graph frame (962 × 493 desktop,
+           340 × 298 mobile) — see "Graph" in hero.css.
+           Markup is the final state; hero.js rewinds and plays it.
+           ================================================================== -->
+      <div class="hero_graph" data-hero-graph
+           role="img" aria-label="Chart: your competitors' sites sit level, your site today dips below them, and we take you far above both.">
+
+        <!-- Column highlights -->
+        <div class="hero_g hero_col hero_col--today" data-hero-col="today">
+          <span class="hero_col-fill" data-hero-col-fill></span>
+          <span class="hero_col-bar" data-hero-col-bar></span>
+        </div>
+        <div class="hero_g hero_col hero_col--goal" data-hero-col="goal">
+          <span class="hero_col-fill" data-hero-col-fill></span>
+          <span class="hero_col-bar" data-hero-col-bar></span>
+        </div>
+
+        <!-- Grid -->
+        <span class="hero_g hero_rule hero_rule--axis" data-hero-grid></span>
+        <span class="hero_g hero_rule hero_rule--dashed hero_rule--1" data-hero-grid></span>
+        <span class="hero_g hero_rule hero_rule--dashed hero_rule--2" data-hero-grid></span>
+        <span class="hero_g hero_rule hero_rule--dashed hero_rule--3" data-hero-grid></span>
+        <span class="hero_g hero_rule hero_rule--dashed hero_rule--4" data-hero-grid></span>
+        <span class="hero_g hero_rule hero_rule--dashed hero_rule--5" data-hero-grid></span>
+        <span class="hero_g hero_baseline" data-hero-base></span>
+
+        <!-- Connectors (label → dot) -->
+        <span class="hero_g hero_pin hero_pin--competitor" data-hero-pin="competitor"></span>
+        <span class="hero_g hero_pin hero_pin--today" data-hero-pin="today"></span>
+        <span class="hero_g hero_pin hero_pin--goal" data-hero-pin="goal"></span>
+
+        <!-- The line: grey "ghost" path, then the coloured stretches over it -->
+        <svg class="hero_lines hero_lines--desktop" data-hero-lines="desktop" viewBox="0 0 962 493" aria-hidden="true">
+          <path data-hero-line="ghost" transform="translate(0 75.18)" stroke="#E5E5E5"
+                d="M0 225.307H480.13C481.323 225.307 482.453 225.839 483.213 226.758L558.751 318.084C560.35 320.017 563.313 320.018 564.913 318.086L826.804 1.94823C827.564 1.03091 828.693 0.5 829.884 0.5H958.5"/>
+          <path data-hero-line="dip" transform="translate(465.5 300)" stroke="#4A4A4A"
+                d="M0 0.5H14.6303C15.8226 0.5 16.9527 1.03185 17.7126 1.95057L96.3306 97.0004"/>
+          <path data-hero-line="climb" transform="translate(561.83 75.18)" stroke="#3D8956"
+                d="M0.385042 321.808L265.358 1.94823C266.118 1.03091 267.247 0.5 268.439 0.5H397.555"/>
+        </svg>
+        <svg class="hero_lines hero_lines--mobile" data-hero-lines="mobile" viewBox="0 0 340 298" aria-hidden="true">
+          <path data-hero-line="ghost" transform="translate(15.02 42.17)" stroke="#E5E5E5"
+                d="M0 138.28H126.93C128.613 138.28 130.115 139.333 130.69 140.915L147.459 187.081C148.734 190.593 153.7 190.594 154.978 187.083L221.898 3.1325C222.473 1.55202 223.975 0.5 225.657 0.5H257.979"/>
+          <path data-hero-line="dip" transform="translate(139.88 179.95)" stroke="#5B5B5B"
+                d="M0 0.5H2.06866C3.75121 0.5 5.25388 1.55292 5.82832 3.13437L26.3542 59.6434"/>
+          <path data-hero-line="climb" transform="translate(165.76 42.17)" stroke="#3D8956"
+                d="M0.469873 197.424L71.1522 3.1325C71.7271 1.55202 73.2293 0.5 74.9111 0.5H152.233"/>
+        </svg>
+        <span class="hero_g hero_segment" data-hero-segment></span>
+
+        <!-- Markers (right → left so the leftmost dot sits on top, as in Figma) -->
+        <span class="hero_g hero_marker hero_marker--c3" data-hero-dot></span>
+        <span class="hero_g hero_marker hero_marker--c2" data-hero-dot></span>
+        <span class="hero_g hero_marker hero_marker--c1" data-hero-dot></span>
+        <span class="hero_g hero_marker hero_marker--today" data-hero-marker="today"></span>
+        <span class="hero_g hero_marker hero_marker--goal hero_marker--pulse" data-hero-pulse></span>
+        <span class="hero_g hero_marker hero_marker--goal" data-hero-marker="goal"></span>
+
+        <!-- Labels -->
+        <span class="hero_g hero_pill hero_pill--competitor" data-hero-pill="competitor">Your Competitors site</span>
+        <span class="hero_g hero_pill hero_pill--today" data-hero-pill="today">Your Site, Today</span>
+        <span class="hero_g hero_pill hero_pill--goal" data-hero-pill="goal">Where We Take You</span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Demo-only spacer so the page can scroll -->
+  <div class="demo-spacer">Next section</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+  <script src="hero.js"></script>
+</body>
+</html>
