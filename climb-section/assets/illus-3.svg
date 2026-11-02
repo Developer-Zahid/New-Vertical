@@ -1,0 +1,25 @@
+<svg width="103" height="73" viewBox="98 387 103 73" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 436.23)" fill="white" stroke="#D9D9D9" stroke-linejoin="bevel"></rect>
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 432.23)" fill="white" stroke="#D9D9D9" stroke-linejoin="bevel"></rect>
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 424.23)" fill="white"></rect>
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 424.23)" fill="url(#pattern1_614_3532)"></rect>
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 424.23)" stroke="#D9D9D9" stroke-linejoin="bevel"></rect>
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 416)" fill="white" stroke="#6FB787" stroke-linejoin="bevel"></rect>
+<rect width="44" height="5.99483" transform="matrix(0.866025 0.5 0 1 100.007 410.008)" fill="white" stroke="#6FB787" stroke-linejoin="bevel"></rect>
+<rect width="44" height="4" transform="matrix(0.866025 0.5 0 1 100.007 432.234)" fill="white" stroke="#D9D9D9" stroke-linejoin="bevel"></rect>
+<rect width="44" height="5.99" transform="matrix(0.866025 -0.5 0 1 138.113 432.012)" fill="white" stroke="#6FB787" stroke-linejoin="bevel"></rect>
+<rect width="44" height="4" transform="matrix(0.866025 -0.5 0 1 138.113 454.234)" fill="white" stroke="#D9D9D9" stroke-linejoin="bevel"></rect>
+<rect width="44" height="5.99" transform="matrix(0.866025 -0.5 0 1 99.9995 410.012)" fill="white" stroke="#6FB787" stroke-linejoin="bevel"></rect>
+<rect width="44" height="44" transform="matrix(0.866025 -0.5 0.866025 0.5 99.9995 410)" fill="#6FB787" fill-opacity="0.21" stroke="#6FB787" stroke-linejoin="bevel"></rect>
+<circle cx="198.974" cy="428.268" r="0.556641" fill="#D9D9D9"></circle>
+<defs>
+<pattern id="pattern1_614_3532" patternUnits="userSpaceOnUse" patternTransform="matrix(2.7832 0 0 5.56641 21.4434 21.4434)" preserveAspectRatio="none" viewBox="0 0 2.7832 5.56641" width="1" height="1">
+<use xlink:href="#pattern1_614_3532_inner" transform="translate(-2.7832 0)"></use>
+<g id="pattern1_614_3532_inner">
+<circle cx="0.556641" cy="0.556641" r="0.556641" fill="#D9D9D9"></circle>
+</g>
+<use xlink:href="#pattern1_614_3532_inner" transform="translate(-1.3916 2.7832)"></use>
+<use xlink:href="#pattern1_614_3532_inner" transform="translate(1.3916 2.7832)"></use>
+</pattern>
+</defs>
+</svg>

@@ -1,0 +1,380 @@
+/* ==========================================================================
+   Climb section — pinned card stack + performance chart
+   ========================================================================== */
+
+:root {
+  --climb-green: #3D8956;
+  --climb-green-mid: #4E9365;
+  --climb-green-line: #58B075;
+  --climb-green-soft: #6FB787;
+  --climb-ink: #01270D;
+  --climb-lime: #ECFEA8;
+  --climb-lime-dark: #C3D67A;
+  --climb-cream: #FCFFF1;
+  --climb-text: #130E0D;
+  --climb-muted: #707070;
+
+  --climb-serif: "Source Serif 4", "Tiempos Text", Georgia, serif;
+  --climb-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --climb-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--climb-green);
+  color: #fff;
+  font-family: var(--climb-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Demo-only spacers */
+.demo-spacer {
+  display: grid;
+  place-items: center;
+  height: 80vh;
+  font: 500 14px/1 var(--climb-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   Section + header
+   -------------------------------------------------------------------------- */
+.climb {
+  background: var(--climb-green);
+  padding: 64px 16px 0;
+  overflow-x: clip;
+}
+
+.climb_container {
+  max-width: 1032px;
+  margin: 0 auto;
+}
+
+.climb_header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.climb_title {
+  margin: 0;
+  font: 400 48px/1.15 var(--climb-serif);
+  letter-spacing: -0.02em;
+}
+
+.climb_title-accent { color: var(--climb-lime); }
+
+.climb_lede {
+  max-width: 420px;
+  margin: 18px auto 0;
+  font-size: 15px;
+  line-height: 23px;
+  letter-spacing: -0.015em;
+}
+
+/* --------------------------------------------------------------------------
+   Stage: panel (cards) + chart
+   -------------------------------------------------------------------------- */
+.climb_stage {
+  display: grid;
+  grid-template-columns: 420fr 600fr;
+  grid-template-rows: minmax(504px, auto);
+  gap: 12px;
+}
+
+.climb_panel {
+  position: relative;
+  min-height: var(--climb-panel-min, 0px);
+  padding: 12px;
+  border: 1px solid var(--climb-green-line);
+  overflow: hidden;
+}
+
+.climb_stack {
+  --row-h: 48px;    /* collapsed card height */
+  --row-gap: 3px;   /* collapsed rows overlap the previous extrusion slightly */
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 6.5px 0 0; /* room for the right-hand extrusion */
+  display: grid;
+  gap: 18px;
+}
+
+/* JS-enhanced mode: cards are absolutely stacked and driven by GSAP */
+.climb.is-enhanced .climb_stack {
+  position: absolute;
+  inset: 12px 18.5px 12px 12px;
+  display: block;
+  padding: 0;
+}
+
+.climb.is-enhanced .climb_card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   Card (3D extruded slab)
+   -------------------------------------------------------------------------- */
+.climb_card {
+  --card-bg: var(--climb-cream);
+  --face-r: var(--climb-lime-dark);
+  --face-b: var(--climb-lime);
+  position: relative;
+  margin-bottom: 6px;
+}
+
+/* Right face */
+.climb_card::before,
+.climb_card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.climb_card::before {
+  top: 0;
+  left: 100%;
+  width: 6.5px;
+  height: calc(100% + 6px);
+  background: var(--face-r);
+  clip-path: polygon(0 0, 100% 6.5px, 100% 100%, 0 calc(100% - 6px));
+}
+
+/* Bottom face */
+.climb_card::after {
+  top: 100%;
+  left: 0;
+  width: calc(100% + 6.5px);
+  height: 6px;
+  background: var(--face-b);
+  clip-path: polygon(0 0, calc(100% - 6.5px) 0, 100% 100%, 12px 100%);
+}
+
+.climb_card-inner {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+/* Collapsed "✓ title" row — hidden until the card collapses */
+.climb_card-row {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--row-h, 48px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 16px;
+  font: 400 18px/1 var(--climb-serif);
+  letter-spacing: -0.01em;
+  color: #fff;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.climb_card-row img { flex: none; }
+
+.climb_card-body {
+  position: relative;
+  padding: 31px 32px 32px;
+  color: var(--climb-text);
+}
+
+.climb_card-media {
+  min-height: 85px;
+}
+
+.climb_card-media img {
+  display: block;
+  margin-left: var(--illus-x, 0px);
+}
+
+.climb_tag {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  margin: 0;
+  font: 500 10px/20px var(--climb-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.climb_tag-key   { padding: 0 6px; background: #C9D0B1; color: var(--climb-ink); }
+.climb_tag-value { padding: 0 6px; background: #D2DAB6; color: #0E2D27; }
+
+.climb_card-title {
+  margin: 32px 0 0;
+  font: 400 24px/1.3 var(--climb-serif);
+  letter-spacing: -0.015em;
+}
+
+.climb_card-text {
+  max-width: 326px;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 23px;
+  letter-spacing: -0.02em;
+  color: var(--climb-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Chart
+   -------------------------------------------------------------------------- */
+.climb_chart {
+  position: relative;
+  background: var(--climb-ink);
+  overflow: hidden;
+}
+
+/* Static mode (reduced motion / no JS): cards list out in full, so keep the
+   chart at its natural ratio and let it ride alongside instead of stretching */
+@media (min-width: 768px) {
+  .climb:not(.is-enhanced) .climb_chart {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    aspect-ratio: 601 / 504;
+  }
+}
+
+.climb_chart-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.climb_chart-axis { font: 500 10px var(--climb-mono); }
+.climb_chart-label { font: 500 12px var(--climb-sans); }
+
+/* --------------------------------------------------------------------------
+   Footer: testimonial + CTAs over the striped background
+   -------------------------------------------------------------------------- */
+.climb_footer {
+  position: relative;
+  padding: 80px 0 64px;
+}
+
+.climb_footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg,
+    rgba(255, 255, 255, 0.08) 0 1px,
+    transparent 1px 10.02px);
+  pointer-events: none;
+}
+
+.climb_quote {
+  position: relative;
+  max-width: 568px;
+  margin: 0 auto;
+  padding: 25px 24px 0;
+  min-height: 106px;
+  background: var(--climb-green);
+  border-block: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.climb_quote-text {
+  margin: 0;
+  font: 400 20px/1.3 var(--climb-serif);
+  letter-spacing: -0.01em;
+}
+
+.climb_quote-author {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 15px;
+  line-height: 32px;
+}
+
+.climb_quote-author img { display: block; }
+.climb_quote-name { padding: 0 18px 0 10px; background: var(--climb-green-line); font-weight: 500; }
+.climb_quote-role { padding: 0 10px; color: rgba(255, 255, 255, 0.6); }
+
+.climb_actions {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+}
+
+.climb_actions-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.climb_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 24px;
+  font: 600 15px/1 var(--climb-sans);
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.climb_btn--outline {
+  background: var(--climb-green);
+  border: 1px solid var(--climb-green-soft);
+  color: #fff;
+}
+
+.climb_btn--primary {
+  background: var(--climb-lime);
+  color: var(--climb-ink);
+}
+
+.climb_btn:hover { transform: translateY(-1px); }
+.climb_btn--outline:hover { background: var(--climb-green-mid); }
+.climb_btn:focus-visible { outline: 2px solid var(--climb-lime); outline-offset: 3px; }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .climb { padding-top: 48px; }
+  .climb_header { margin-bottom: 32px; }
+  .climb_title { font-size: 34px; }
+
+  .climb_stage {
+    grid-template-columns: 1fr;
+    /* tall enough that the peak marker (y≈310 in chart units) is never cropped */
+    grid-template-rows: clamp(256px, 72vw, 340px) auto;
+  }
+
+  .climb_chart { order: -1; }
+
+  .climb_stack { --row-h: 44px; }
+  .climb_card-row { font-size: 16px; }
+  .climb_card-body { padding: 24px 20px 24px; }
+  .climb_card-media { min-height: 0; transform-origin: left top; }
+  .climb_card-media img { width: auto; height: 56px; margin-left: 0; }
+  .climb_tag { top: 14px; right: 14px; }
+  .climb_card-title { margin-top: 18px; font-size: 21px; }
+  .climb_card-text { font-size: 14px; line-height: 21px; }
+
+  .climb_footer { padding-top: 48px; }
+  .climb_quote-text { font-size: 18px; }
+  .climb_quote-author { flex-wrap: wrap; row-gap: 6px; }
+  .climb_actions { flex-direction: column; }
+  .climb_actions-divider { display: none; }
+}
