@@ -372,30 +372,39 @@ body {
    Responsive
    -------------------------------------------------------------------------- */
 @media (max-width: 767px) {
-  .climb { padding-top: 48px; }
-  .climb_header { margin-bottom: 32px; }
-  .climb_title { font-size: 34px; }
+  /* Compact layout so header + stage + footer can pin together on a phone */
+  .climb { padding-top: 32px; }
+  .climb_header { margin-bottom: 14px; }
+  .climb_title { font-size: 28px; }
+  .climb_lede { max-width: 320px; margin-top: 8px; font-size: 13px; line-height: 19px; }
 
   .climb_stage {
     grid-template-columns: 1fr;
-    /* tall enough that the peak marker (y≈310 in chart units) is never cropped */
-    grid-template-rows: clamp(256px, 72vw, 340px) auto;
+    grid-template-rows: auto auto;
+    gap: 10px;
   }
 
-  .climb_chart { order: -1; }
+  /* Static mode: natural ratio. Enhanced mode: short chart, JS switches it to "meet". */
+  .climb_chart { order: -1; aspect-ratio: 601 / 504; }
+  .climb.is-enhanced .climb_chart { aspect-ratio: auto; height: 168px; }
 
-  .climb_stack { --row-h: 44px; }
-  .climb_card-row { font-size: 16px; }
-  .climb_card-body { padding: 24px 20px 24px; }
-  .climb_card-media { min-height: 0; transform-origin: left top; }
-  .climb_card-media img { width: auto; height: 56px; margin-left: 0; }
-  .climb_tag { top: 14px; right: 14px; }
-  .climb_card-title { margin-top: 18px; font-size: 21px; }
-  .climb_card-text { font-size: 14px; line-height: 21px; }
+  .climb_panel { padding: 8px; }
+  .climb.is-enhanced .climb_stack { inset: 8px 14.5px 8px 8px; }
+  .climb_stack { --row-h: 36px; }
+  .climb_card-row { gap: 10px; padding-left: 12px; font-size: 15px; }
+  .climb_card-body { padding: 14px 16px 16px; }
+  .climb_card-media { min-height: 0; }
+  .climb_card-media img { width: auto; height: 40px; margin-left: 0; }
+  .climb_tag { top: 12px; right: 12px; font-size: 9px; line-height: 18px; }
+  .climb_card-title { margin-top: 10px; font-size: 18px; }
+  .climb_card-text { margin-top: 6px; font-size: 13px; line-height: 19px; }
 
-  .climb_footer { padding-top: 48px; }
-  .climb_quote-text { font-size: 18px; }
-  .climb_quote-author { flex-wrap: wrap; row-gap: 6px; }
-  .climb_actions { flex-direction: column; }
+  .climb_footer { padding: 16px 0; }
+  .climb_quote { min-height: 0; padding: 12px 8px; }
+  .climb_quote-text { font-size: 15px; }
+  .climb_quote-author { margin-top: 10px; font-size: 13px; line-height: 28px; }
+  .climb_quote-author img { width: 28px; height: 28px; }
+  .climb_actions { flex-direction: column; gap: 8px; margin-top: 14px; }
   .climb_actions-divider { display: none; }
+  .climb_btn { height: 42px; font-size: 14px; }
 }

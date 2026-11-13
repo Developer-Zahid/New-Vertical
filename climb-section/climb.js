@@ -1,6 +1,7 @@
 /* ==========================================================================
    Climb section
-   - Header + stage + footer pin while you scroll (stage only on phones).
+   - Header + stage + footer pin together while you scroll. Desktop shows the
+     whole block (scaled to fit if needed); phones frame just the stage.
    - Each step: the next card rises from the bottom of the panel, the previous
      card collapses into a "✓ title" row, and the chart's bell curve climbs.
    - Clicking a "✓ title" row scrolls back to that card's step.
@@ -28,6 +29,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
     c: section.querySelector('[data-climb-curve="c"]'),
   };
   const marker  = section.querySelector("[data-climb-marker]");
+  const chartSvg = section.querySelector("[data-climb-chart-svg]");
 
   /* ------------------------------------------------------------------------
      Chart data (taken from the six design frames, in SVG user units).
@@ -37,7 +39,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
   const LAYERS = { a: { base: 709, end: 710 }, b: { base: 729, end: 730 }, c: { base: 745, end: 746 } };
   const bell = (peak) => [650, 688.5, peak, 900.5, 948];
   const CHART_STEPS = [
-    { a: bell(709),   b: bell(508.5),                      c: bell(650.5) },                    // start: flat
+    { a: bell(709),   b: bell(729),                        c: bell(745) },                      // start: all flat
     { a: bell(641),   b: [709, 696.5, 645.5, 892.5, 881],  c: [730, 688.5, 658.5, 900.5, 868] },
     { a: bell(573),   b: bell(592.5),                      c: bell(650.5) },
     { a: bell(505),   b: bell(560.5),                      c: bell(650.5) },
@@ -58,7 +60,8 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
   const curvePath = (k) => {
     const { base, end } = LAYERS[k];
     const [c1, c2, p, c3, c4] = [0, 1, 2, 3, 4].map((i) => chart[k + i]);
-    return `M495 746V${base}C${c1} ${base} ${c2} ${p} 795.4 ${p}C${c3} ${p} ${c4} ${end} 1095 ${base}V746Z`;
+    // Flat runs either side cover the extended drawing area (see markup)
+    return `M-105 746V${base}H495C${c1} ${base} ${c2} ${p} 795.4 ${p}C${c3} ${p} ${c4} ${end} 1095 ${base}H1696V746Z`;
   };
 
   const renderChart = () => {
@@ -85,16 +88,19 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
   const sizePanel = () => {
     let need = 0;
     cards.forEach((_, i) => (need = Math.max(need, i * pitch() + fullH(i))));
-    panel.style.setProperty("--climb-panel-min", `${need + 6 + 24 + 2}px`);
+    const cs = getComputedStyle(panel);
+    const chrome = ["paddingTop", "paddingBottom", "borderTopWidth", "borderBottomWidth"]
+      .reduce((sum, prop) => sum + parseFloat(cs[prop]), 0);
+    panel.style.setProperty("--climb-panel-min", `${need + 6 + chrome}px`);
   };
 
-  // Scale the pinned block down (never below 70%) when it's taller than the viewport
+  // Scale the pinned block down (never below 65%) when it's taller than the viewport
   const FIT_GUTTER = 32;
   const fitPin = () => {
     gsap.set(fitEl, { scale: 1 });
     pinEl.style.height = "";
     const h = fitEl.offsetHeight;
-    const scale = gsap.utils.clamp(0.7, 1, (window.innerHeight - FIT_GUTTER) / h);
+    const scale = gsap.utils.clamp(0.65, 1, (window.innerHeight - FIT_GUTTER) / h);
     if (scale < 1) {
       gsap.set(fitEl, { scale });
       pinEl.style.height = `${h * scale}px`; // so the pin spacer matches the visual size
@@ -125,14 +131,29 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
         return;
       }
 
+      // Phones get a short chart: fit its full height (peak marker included)
+      // instead of cropping; the extended drawing fills the side gutters.
+      if (ctx.conditions.isMobile) {
+        chartSvg.setAttribute("viewBox", "495 296 601 450");
+        chartSvg.setAttribute("preserveAspectRatio", "xMidYMax meet");
+      }
+
       const { isMobile } = ctx.conditions;
-      // Phones can't fit header + stage + footer, so only the stage pins there
-      const pinTarget = isMobile ? stage : pinEl;
 
       const onRefreshInit = () => {
         sizePanel();
         if (!isMobile) fitPin();
       };
+
+      // Phones: the whole block still pins as one piece, but the pin starts
+      // with the stage (chart + cards) centred, so header/footer sit off-screen.
+      const stageStart = () => {
+        const offset = stage.getBoundingClientRect().top - pinEl.getBoundingClientRect().top;
+        const pad = Math.max(16, (window.innerHeight - stage.offsetHeight) / 2);
+        return `top+=${offset - pad} top`;
+      };
+      const blockStart = () =>
+        pinEl.offsetHeight + FIT_GUTTER <= window.innerHeight ? "center center" : "bottom bottom-=16";
 
       section.classList.add("is-enhanced");
       onRefreshInit();
@@ -143,10 +164,10 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
         defaults: { ease: "power2.inOut" },
         onUpdate: renderChart,
         scrollTrigger: {
-          trigger: pinTarget,
-          pin: pinTarget,
-          // Centre the pinned block when it fits; otherwise keep its bottom (the stage) in view
-          start: () => (pinTarget.offsetHeight + FIT_GUTTER <= window.innerHeight ? "center center" : "bottom bottom-=16"),
+          trigger: pinEl,
+          pin: pinEl,
+          // Desktop: centre the whole block. Phones: centre the stage.
+          start: isMobile ? stageStart : blockStart,
           end: () => `+=${window.innerHeight * 0.75 * cards.length}`,
           scrub: 0.8,
           // snap: {
@@ -219,6 +240,8 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
         section.classList.remove("is-enhanced");
         panel.style.removeProperty("--climb-panel-min");
         pinEl.style.height = "";
+        chartSvg.setAttribute("viewBox", "495 242 601 504");
+        chartSvg.setAttribute("preserveAspectRatio", "xMidYMax slice");
         setChartStep(CHART_STEPS.length - 1);
       };
     }

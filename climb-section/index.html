@@ -122,34 +122,44 @@
 
             <!-- Right: performance chart. Markup shows the final (all-fixes) state; JS rewinds it. -->
             <div class="climb_chart">
-              <svg class="climb_chart-svg" viewBox="495 242 601 504" preserveAspectRatio="xMidYMax slice"
+              <!-- Everything is drawn 600 units past both sides of the 601-wide frame so a
+                   short, "meet"-scaled chart on phones has no empty gutters. -->
+              <svg class="climb_chart-svg" viewBox="495 242 601 504" preserveAspectRatio="xMidYMax slice" data-climb-chart-svg
                   role="img" aria-label="Site performance chart that climbs as each fix is applied">
                 <defs>
                   <pattern id="climb-bars-a" patternUnits="userSpaceOnUse" x="502" y="0" width="9" height="1084"><rect width="1" height="1084" fill="#6FB787"/></pattern>
                   <pattern id="climb-bars-b" patternUnits="userSpaceOnUse" x="502" y="0" width="9" height="1084"><rect width="1" height="1084" fill="#3D8956"/></pattern>
                   <pattern id="climb-bars-c" patternUnits="userSpaceOnUse" x="502" y="0" width="9" height="1084"><rect width="1" height="1084" fill="#17443B"/></pattern>
-                  <mask id="climb-mask-a" maskUnits="userSpaceOnUse" x="495" y="242" width="601" height="504">
-                    <path data-climb-curve="a" fill="#fff" d="M495 746V709C650 709 688.5 374.5 795.4 374.5C900.5 374.5 948 710 1095 709V746Z"/>
+                  <mask id="climb-mask-a" maskUnits="userSpaceOnUse" x="-105" y="242" width="1801" height="504">
+                    <path data-climb-curve="a" fill="#fff" d="M-105 746V709H495C650 709 688.5 374.5 795.4 374.5C900.5 374.5 948 710 1095 709H1696V746Z"/>
                   </mask>
-                  <mask id="climb-mask-b" maskUnits="userSpaceOnUse" x="495" y="242" width="601" height="504">
-                    <path data-climb-curve="b" fill="#fff" d="M495 746V729C650 729 688.5 508.5 795.4 508.5C900.5 508.5 948 730 1095 729V746Z"/>
+                  <mask id="climb-mask-b" maskUnits="userSpaceOnUse" x="-105" y="242" width="1801" height="504">
+                    <path data-climb-curve="b" fill="#fff" d="M-105 746V729H495C650 729 688.5 508.5 795.4 508.5C900.5 508.5 948 730 1095 729H1696V746Z"/>
                   </mask>
-                  <mask id="climb-mask-c" maskUnits="userSpaceOnUse" x="495" y="242" width="601" height="504">
-                    <path data-climb-curve="c" fill="#fff" d="M495 746V745C650 745 688.5 650.5 795.4 650.5C900.5 650.5 948 746 1095 745V746Z"/>
+                  <mask id="climb-mask-c" maskUnits="userSpaceOnUse" x="-105" y="242" width="1801" height="504">
+                    <path data-climb-curve="c" fill="#fff" d="M-105 746V745H495C650 745 688.5 650.5 795.4 650.5C900.5 650.5 948 746 1095 745H1696V746Z"/>
                   </mask>
                 </defs>
 
-                <rect x="495" y="242" width="601" height="504" fill="#01270D"/>
+                <rect x="-105" y="242" width="1801" height="504" fill="#01270D"/>
 
                 <g class="climb_chart-grid" stroke="#fff" stroke-opacity="0.08" stroke-dasharray="4 3">
-                  <line x1="495" x2="1095" y1="245.6" y2="245.6"/>
-                  <line x1="495" x2="1095" y1="368.6" y2="368.6"/>
-                  <line x1="495" x2="1095" y1="491.6" y2="491.6"/>
-                  <line x1="495" x2="1095" y1="614.6" y2="614.6"/>
-                  <line x1="495" x2="1095" y1="737.6" y2="737.6"/>
+                  <line x1="-105" x2="1696" y1="245.6" y2="245.6"/>
+                  <line x1="-105" x2="1696" y1="368.6" y2="368.6"/>
+                  <line x1="-105" x2="1696" y1="491.6" y2="491.6"/>
+                  <line x1="-105" x2="1696" y1="614.6" y2="614.6"/>
+                  <line x1="-105" x2="1696" y1="737.6" y2="737.6"/>
+                  <line x1="45.6" x2="45.6" y1="246" y2="746"/>
+                  <line x1="195.6" x2="195.6" y1="246" y2="746"/>
+                  <line x1="345.6" x2="345.6" y1="246" y2="746"/>
+                  <line x1="495.6" x2="495.6" y1="246" y2="746"/>
                   <line x1="645.6" x2="645.6" y1="246" y2="746"/>
                   <line x1="795.6" x2="795.6" y1="246" y2="746"/>
                   <line x1="945.6" x2="945.6" y1="246" y2="746"/>
+                  <line x1="1095.6" x2="1095.6" y1="246" y2="746"/>
+                  <line x1="1245.6" x2="1245.6" y1="246" y2="746"/>
+                  <line x1="1395.6" x2="1395.6" y1="246" y2="746"/>
+                  <line x1="1545.6" x2="1545.6" y1="246" y2="746"/>
                 </g>
                 <line x1="520.5" x2="520.5" y1="246" y2="746" stroke="#fff" stroke-opacity="0.24"/>
                 <g class="climb_chart-axis" fill="#fff" fill-opacity="0.2" text-anchor="middle">
@@ -160,12 +170,12 @@
                 </g>
 
                 <g mask="url(#climb-mask-a)">
-                  <rect x="495" y="330" width="601" height="416" fill="url(#climb-bars-a)"/>
+                  <rect x="-105" y="330" width="1801" height="416" fill="url(#climb-bars-a)"/>
                   <g mask="url(#climb-mask-b)">
-                    <rect x="495" y="330" width="601" height="416" fill="url(#climb-bars-b)"/>
+                    <rect x="-105" y="330" width="1801" height="416" fill="url(#climb-bars-b)"/>
                   </g>
                   <g mask="url(#climb-mask-c)">
-                    <rect x="495" y="330" width="601" height="416" fill="url(#climb-bars-c)"/>
+                    <rect x="-105" y="330" width="1801" height="416" fill="url(#climb-bars-c)"/>
                   </g>
                 </g>
 
