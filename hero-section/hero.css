@@ -282,6 +282,7 @@ body {
   aspect-ratio: 962 / 493;
   margin-top: -5%;               /* its top lines up with the buttons (330px) */
   container-type: inline-size;
+  isolation: isolate;            /* marker ripples (z-index: -1) stay inside the chart */
   pointer-events: none;          /* never block the buttons it sits beside */
 }
 
@@ -396,11 +397,26 @@ body {
   --s: 20;
   --fill: #E9E9E9;
   --hex: #4A4A4A;
+  --ripple: #BDBDBD;
   width: calc(var(--s) * var(--u));
   height: calc(var(--s) * var(--u));
   border: calc(var(--s) / 10 * var(--u)) solid #fff;
   border-radius: 50%;
   background: var(--fill);
+}
+
+/* Ripple: a disc behind the marker, driven by --ripple-scale / --ripple-alpha
+   from hero.js once the intro has finished (hidden until then) */
+.hero_marker::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--s) / -10 * var(--u)); /* out over the white ring */
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--ripple);
+  opacity: var(--ripple-alpha, 0);
+  transform: scale(var(--ripple-scale, 1));
+  pointer-events: none;
 }
 
 .hero_marker::after {
@@ -419,9 +435,7 @@ body {
 .hero_marker--c2    { --x: 232; --y: 290; }
 .hero_marker--c3    { --x: 246; --y: 290; }
 .hero_marker--today { --x: 552; --y: 387; --hex: var(--hero-text); }
-.hero_marker--goal  { --x: 871; --y: 65;  --fill: #D2E4D8; --hex: var(--hero-green); }
-.hero_marker--pulse { opacity: 0; }
-.hero_marker--pulse::after { content: none; }
+.hero_marker--goal  { --x: 871; --y: 65;  --fill: #D2E4D8; --hex: var(--hero-green); --ripple: var(--hero-green); }
 
 /* Labels */
 .hero_pill {

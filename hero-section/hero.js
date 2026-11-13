@@ -28,7 +28,8 @@
   const fades    = hero.querySelectorAll("[data-hero-fade]");
   const buttons  = hero.querySelectorAll("[data-hero-btn]");
 
-  const pop  = { scale: 0, transformOrigin: "50% 50%", duration: 0.5, ease: "back.out(2.4)" };
+  // clearProps: no leftover transform, so the marker's ripple can sit behind it (z-index: -1)
+  const pop  = { scale: 0, transformOrigin: "50% 50%", duration: 0.5, ease: "back.out(2.4)", clearProps: "transform" };
   const rise = { scaleY: 0, transformOrigin: "50% 100%" };
 
   // Remember what has already played so a breakpoint rebuild doesn't replay it
@@ -90,7 +91,6 @@
     const tl = gsap.timeline({
       paused: true,
       defaults: { ease: "power2.out" },
-      onComplete: () => (graphPlayed = true),
     });
 
     const draw = (path, vars, at) => {
@@ -128,14 +128,24 @@
     draw(line("climb"), { duration: 1.2, ease: "power2.inOut" }, 2.0);
     fill("goal", { duration: 1.2, ease: "power2.inOut" }, 2.15);
     tl.from(mark("goal"), pop, 2.95)
-      .fromTo(q("[data-hero-pulse]"),
-        { opacity: 0.6, scale: 1 },
-        { opacity: 0, scale: 2.6, transformOrigin: "50% 50%", duration: 1.2, immediateRender: false }, 3.0)
       .from(pin("goal"), { ...rise, duration: 0.4 }, 3.05)
       .from(pill("goal"), { autoAlpha: 0, y: 10, scale: 0.9, duration: 0.6, ease: "back.out(2)" }, 3.2);
 
     return tl;
   };
+
+  // Endless ripple on the markers that opt in (data-hero-ripple)
+  const startRipple = () =>
+    gsap.fromTo(graph.querySelectorAll("[data-hero-ripple]"),
+      { "--ripple-scale": 1, "--ripple-alpha": 0.45 },
+      {
+        "--ripple-scale": 2.4,
+        "--ripple-alpha": 0,
+        duration: 1.8,
+        ease: "power2.out",
+        repeat: -1,
+        repeatDelay: 0.5,
+      });
 
   /* ------------------------------------------------------------------------
      Build — graph lines per breakpoint, nothing for reduced motion
@@ -154,6 +164,13 @@
         if (!introPlayed) buildIntro();
 
         const graphTl = buildGraph(isMobile);
+
+        // Registered on the context so a breakpoint change reverts the loop too
+        ctx.add("ripple", startRipple);
+        graphTl.eventCallback("onComplete", () => {
+          graphPlayed = true;
+          ctx.ripple();
+        });
 
         if (graphPlayed) {
           graphTl.progress(1);
