@@ -1,18 +1,21 @@
 /* ==========================================================================
    Climb section
-   - Stage pins while you scroll.
+   - Header + stage + footer pin while you scroll (stage only on phones).
    - Each step: the next card rises from the bottom of the panel, the previous
      card collapses into a "✓ title" row, and the chart's bell curve climbs.
+   - Clicking a "✓ title" row scrolls back to that card's step.
    - One scrubbed timeline drives everything, so cards and chart never drift.
    ========================================================================== */
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 (() => {
   const section = document.querySelector("[data-climb]");
   if (!section) return;
 
   const pinEl   = section.querySelector("[data-climb-pin]");
+  const fitEl   = section.querySelector("[data-climb-fit]");
+  const stage   = section.querySelector("[data-climb-stage]");
   const panel   = section.querySelector("[data-climb-panel]");
   const stack   = section.querySelector("[data-climb-stack]");
   const cards   = gsap.utils.toArray("[data-climb-card]", section);
@@ -85,6 +88,19 @@ gsap.registerPlugin(ScrollTrigger);
     panel.style.setProperty("--climb-panel-min", `${need + 6 + 24 + 2}px`);
   };
 
+  // Scale the pinned block down (never below 70%) when it's taller than the viewport
+  const FIT_GUTTER = 32;
+  const fitPin = () => {
+    gsap.set(fitEl, { scale: 1 });
+    pinEl.style.height = "";
+    const h = fitEl.offsetHeight;
+    const scale = gsap.utils.clamp(0.7, 1, (window.innerHeight - FIT_GUTTER) / h);
+    if (scale < 1) {
+      gsap.set(fitEl, { scale });
+      pinEl.style.height = `${h * scale}px`; // so the pin spacer matches the visual size
+    }
+  };
+
   const COLLAPSED = {
     "--card-bg": "rgba(78, 147, 101, 1)",   // #4E9365
     "--face-r":  "rgba(94, 157, 115, 0.3)",
@@ -109,18 +125,28 @@ gsap.registerPlugin(ScrollTrigger);
         return;
       }
 
+      const { isMobile } = ctx.conditions;
+      // Phones can't fit header + stage + footer, so only the stage pins there
+      const pinTarget = isMobile ? stage : pinEl;
+
+      const onRefreshInit = () => {
+        sizePanel();
+        if (!isMobile) fitPin();
+      };
+
       section.classList.add("is-enhanced");
-      sizePanel();
+      onRefreshInit();
+      ScrollTrigger.addEventListener("refreshInit", onRefreshInit);
       setChartStep(0);
 
       const tl = gsap.timeline({
         defaults: { ease: "power2.inOut" },
         onUpdate: renderChart,
         scrollTrigger: {
-          trigger: pinEl,
-          pin: pinEl,
-          // Centre header + stage when they fit; otherwise keep the stage fully in view
-          start: () => (pinEl.offsetHeight + 32 <= window.innerHeight ? "center center" : "bottom bottom-=16"),
+          trigger: pinTarget,
+          pin: pinTarget,
+          // Centre the pinned block when it fits; otherwise keep its bottom (the stage) in view
+          start: () => (pinTarget.offsetHeight + FIT_GUTTER <= window.innerHeight ? "center center" : "bottom bottom-=16"),
           end: () => `+=${window.innerHeight * 0.75 * cards.length}`,
           scrub: 0.8,
           // snap: {
@@ -130,7 +156,6 @@ gsap.registerPlugin(ScrollTrigger);
           //   ease: "power1.inOut",
           // },
           invalidateOnRefresh: true,
-          onRefreshInit: sizePanel,
         },
       });
 
@@ -167,12 +192,33 @@ gsap.registerPlugin(ScrollTrigger);
         tl.addLabel(`step${i + 1}`, at + 1);
       });
 
+      // Click a "✓ title" row → scroll to the step where that card is open
+      const goToStep = (n) => {
+        gsap.to(window, {
+          scrollTo: {
+            y: tl.scrollTrigger.labelToScroll(`step${n}`),
+            autoKill: true, // stop if the user scrolls mid-jump instead of fighting them
+          },
+          duration: 1,
+          ease: "power2.inOut",
+          overwrite: true, // a second click replaces the jump already in progress
+        });
+      };
+      const onRowClick = rows.map((row, i) => {
+        const handler = () => goToStep(i + 1);
+        row.addEventListener("click", handler);
+        return handler;
+      });
+
       // Fonts change text metrics → card heights → re-measure
       document.fonts?.ready.then(() => ScrollTrigger.refresh());
 
       return () => {
+        rows.forEach((row, i) => row.removeEventListener("click", onRowClick[i]));
+        ScrollTrigger.removeEventListener("refreshInit", onRefreshInit);
         section.classList.remove("is-enhanced");
         panel.style.removeProperty("--climb-panel-min");
+        pinEl.style.height = "";
         setChartStep(CHART_STEPS.length - 1);
       };
     }

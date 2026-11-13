@@ -56,7 +56,13 @@ body {
 
 .climb_header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: clamp(24px, 5vh, 60px);
+}
+
+/* Pinned block (header + stage + footer). JS scales .climb_fit down only
+   when the block is taller than the viewport. */
+.climb_fit {
+  transform-origin: 50% 0;
 }
 
 .climb_title {
@@ -166,20 +172,35 @@ body {
 }
 
 /* Collapsed "✓ title" row — hidden until the card collapses */
+/* Collapsed "✓ title" row — a button that jumps back to its step */
 .climb_card-row {
   position: absolute;
   inset: 0 0 auto;
+  width: 100%;
   height: var(--row-h, 48px);
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-left: 16px;
+  margin: 0;
+  padding: 0 0 0 16px;
+  border: 0;
+  background: transparent;
   font: 400 18px/1 var(--climb-serif);
   letter-spacing: -0.01em;
+  text-align: left;
   color: #fff;
   white-space: nowrap;
+  cursor: pointer;
   visibility: hidden;
   opacity: 0;
+  transition: background-color 0.2s ease;
+}
+
+.climb_card-row:hover { background: rgba(255, 255, 255, 0.06); }
+
+.climb_card-row:focus-visible {
+  outline: 2px solid var(--climb-lime);
+  outline-offset: -2px;
 }
 
 .climb_card-row img { flex: none; }
@@ -263,7 +284,7 @@ body {
    -------------------------------------------------------------------------- */
 .climb_footer {
   position: relative;
-  padding: 80px 0 64px;
+  padding: clamp(28px, 7vh, 80px) 0 clamp(24px, 5.5vh, 64px);
 }
 
 .climb_footer::before {
@@ -280,7 +301,7 @@ body {
   position: relative;
   max-width: 568px;
   margin: 0 auto;
-  padding: 25px 24px 0;
+  padding: 25px 12px 0;
   min-height: 106px;
   background: var(--climb-green);
   border-block: 1px solid rgba(255, 255, 255, 0.08);
@@ -290,7 +311,7 @@ body {
 .climb_quote-text {
   margin: 0;
   font: 400 20px/1.3 var(--climb-serif);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .climb_quote-author {
@@ -311,7 +332,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin-top: 40px;
+  margin-top: clamp(20px, 3.5vh, 40px);
 }
 
 .climb_actions-divider {
