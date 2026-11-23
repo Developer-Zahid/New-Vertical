@@ -1,569 +1,1392 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>New Vertical · Problem → Result section</title>
-<!-- Geist Mono is not on the Webflow CDN yet: Google Fonts for now (callout chips only) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae03338cfdd0eeaeace57d8_P22MackinacPro-500.woff2">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae0360b73074f86ef114232_geist-variable.woff2">
-<style>
-/* =========================================================================
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>New Vertical · Problem → Result section</title>
+		<!-- Geist Mono is not on the Webflow CDN yet: Google Fonts for now (callout chips only) -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap" />
+		<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae03338cfdd0eeaeace57d8_P22MackinacPro-500.woff2" />
+		<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae0360b73074f86ef114232_geist-variable.woff2" />
+		<style>
+			/* =========================================================================
    New Vertical · "Section Problem Result Effect"
    Desktop canvas 1159×754 and mobile canvas 382×801 are laid out in Figma px
-   and scaled to the viewport with --nv-s (set by main.js on refreshInit).
+   and scaled to the viewport with --nv-s (set by the script on refreshInit).
+   Class layers: component (problem-result_*) → combo (cc-*) → utility (u-*).
    ========================================================================= */
 
-@font-face {
-  font-family: "P22 Mackinac Pro";
-  src: url("https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae03338cfdd0eeaeace57d8_P22MackinacPro-500.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Geist";
-  src: url("https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae0360b73074f86ef114232_geist-variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+			@font-face {
+				font-family: "P22 Mackinac Pro";
+				src: url("https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae03338cfdd0eeaeace57d8_P22MackinacPro-500.woff2") format("woff2");
+				font-weight: 500;
+				font-style: normal;
+				font-display: swap;
+			}
+			@font-face {
+				font-family: "Geist";
+				src: url("https://cdn.prod.website-files.com/6ae03252ec42c84fb581658c/6ae0360b73074f86ef114232_geist-variable.woff2") format("woff2");
+				font-weight: 100 900;
+				font-style: normal;
+				font-display: swap;
+			}
 
-/* ---------- demo page only ---------- */
-html, body { margin: 0; background: #242424; }
-.demo-spacer {
-  height: 80vh; display: grid; place-items: center;
-  color: rgba(255, 255, 255, .35); font: 14px/1.4 Geist, system-ui, sans-serif;
-  border-bottom: 1px solid rgba(255, 255, 255, .06);
-}
-.demo-spacer--after { height: 120vh; border: 0; border-top: 1px solid rgba(255, 255, 255, .06); }
+			/* ---------- tokens ---------- */
+			:root {
+				--color-text-primary: #fff;
+				--color-text-secondary: #b6b7b4;
+				--color-bg-primary: #242424;
+				--color-accent: #ed5a38;
+				--font-heading: "P22 Mackinac Pro", Georgia, serif;
+				--font-body: Geist, system-ui, sans-serif;
+				--font-mono: "Geist Mono", ui-monospace, monospace;
+				--section-spacing-block: clamp(4rem, 8vw, 7.5rem);
+				--section-spacing-inline: clamp(1.25rem, 4vw, 2.5rem);
+			}
 
-/* ---------- section ---------- */
-.nv-pr {
-  --nv-s: 1;
-  --nv-accent: #ED5A38;
-  --nv-bg: #242424;
-  --nv-guide: rgba(255, 255, 255, .075);       /* dashed lines (Figma .04 is too faint in browsers) */
-  --nv-guide-solid: rgba(255, 255, 255, .075); /* Section start/end lines */
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--nv-bg);
-  color: #fff;
-  font-family: Geist, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-.nv-pr *, .nv-pr *::before, .nv-pr *::after { box-sizing: border-box; }
-.nv-pr ul, .nv-pr li, .nv-pr h3, .nv-pr h4, .nv-pr p { margin: 0; padding: 0; list-style: none; }
+			/* ---------- base ---------- */
+			html,
+			body {
+				margin: 0;
+				background: var(--color-bg-primary);
+			}
+			body {
+				font-family: var(--font-body);
+				color: var(--color-text-primary);
+				-webkit-font-smoothing: antialiased;
+			}
 
-.nv-sprite { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
+			/* ---------- utilities (only the ones this page uses) ---------- */
+			.u-heading-h3 {
+				font-family: var(--font-heading);
+				font-weight: 500;
+				font-size: 32px;
+				line-height: 40px;
+				letter-spacing: -1.92px;
+			}
+			.u-heading-h4 {
+				font-family: var(--font-heading);
+				font-weight: 500;
+				font-size: 18px;
+				line-height: 24px;
+				letter-spacing: -0.54px;
+			}
+			.u-text-regular {
+				font-size: 14px;
+				line-height: 22px;
+				letter-spacing: -0.056px;
+			}
+			@media (max-width: 767.98px) {
+				.u-heading-h3 {
+					font-size: 24px;
+					line-height: 32px;
+					letter-spacing: -0.72px;
+				}
+				.u-text-regular {
+					font-size: 13px;
+					line-height: 18px;
+					letter-spacing: 0;
+				}
+			}
+			.u-weight-500 {
+				font-weight: 500;
+			}
+			.u-color-primary {
+				color: var(--color-text-primary);
+			}
+			.u-color-secondary {
+				color: var(--color-text-secondary);
+			}
+			.u-bg-primary {
+				background-color: var(--color-bg-primary);
+			}
+			.u-display-flex {
+				display: flex;
+			}
+			.u-align-items-center {
+				align-items: center;
+			}
+			.u-justify-content-center {
+				justify-content: center;
+			}
+			.u-justify-content-between {
+				justify-content: space-between;
+			}
+			.u-flex-shrink-0 {
+				flex-shrink: 0;
+			}
+			.u-position-relative {
+				position: relative;
+			}
+			.u-overflow-hidden {
+				overflow: hidden;
+			}
+			.u-text-uppercase {
+				text-transform: uppercase;
+			}
+			.u-text-center {
+				text-align: center;
+			}
+			.u-text-wrap-balance {
+				text-wrap: balance;
+			}
+			.u-text-wrap-pretty {
+				text-wrap: pretty;
+			}
+			.u-list-unstyled {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.u-spacing-block {
+				padding-block: var(--section-spacing-block);
+			}
+			.u-spacing-inline {
+				padding-inline: var(--section-spacing-inline);
+			}
+			.u-sr-only {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0 0 0 0);
+				white-space: nowrap;
+				border: 0;
+			}
 
-/* ---------- canvases ---------- */
-.nv-canvas {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(var(--nv-s));
-  transform-origin: 50% 50%;
-}
-.nv-canvas--d { width: 1159px; height: 754px; }
-.nv-canvas--m { width: 382px; height: 801px; display: none; }
-@media (max-width: 767.98px) {
-  .nv-canvas--d, .nv-ruler { display: none; }
-  .nv-canvas--m { display: block; }
-}
+			/* ---------- demo sections (not part of the build) ---------- */
+			.section-demo {
+				min-height: 80vh;
+				box-sizing: border-box;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+			}
+			.section-demo.cc-after {
+				min-height: 120vh;
+				border-bottom: 0;
+				border-top: 1px solid rgba(255, 255, 255, 0.06);
+			}
+			.demo_text {
+				margin: 0;
+				opacity: 0.35;
+			}
 
-/* ---------- guide-line ruler (desktop) ----------
+			/* =========================================================================
+   section-problem-result
+   ========================================================================= */
+			.section-problem-result {
+				--nv-s: 1;
+				--nv-guide: rgba(255, 255, 255, 0.075); /* dashed lines (Figma .04 is too faint in browsers) */
+				--nv-guide-solid: rgba(255, 255, 255, 0.075); /* Section start/end lines */
+				box-sizing: border-box;
+				height: 100vh;
+			}
+			/* The stage is absolutely positioned, so the section padding from
+   u-spacing-* never moves the artwork; it only keeps the system shape. */
+			.section-problem-result *,
+			.section-problem-result *::before,
+			.section-problem-result *::after {
+				box-sizing: border-box;
+			}
+			.section-problem-result :where(h3, h4, p) {
+				margin: 0;
+			}
+			.section-problem-result button {
+				font: inherit;
+				color: inherit;
+				cursor: pointer;
+				-webkit-tap-highlight-color: transparent;
+			}
+			.section-problem-result button:focus-visible {
+				outline: 2px solid var(--color-text-primary);
+				outline-offset: 2px;
+			}
+
+			.problem-result_sprite {
+				position: absolute;
+				width: 0;
+				height: 0;
+				overflow: hidden;
+				pointer-events: none;
+			}
+
+			/* ---------- canvases ---------- */
+			.problem-result_canvas {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%) scale(var(--nv-s));
+				transform-origin: 50% 50%;
+			}
+			.problem-result_canvas.cc-desktop {
+				width: 1159px;
+				height: 754px;
+			}
+			.problem-result_canvas.cc-mobile {
+				width: 382px;
+				height: 801px;
+				display: none;
+			}
+			@media (max-width: 767.98px) {
+				.problem-result_canvas.cc-desktop,
+				.problem-result_ruler {
+					display: none;
+				}
+				.problem-result_canvas.cc-mobile {
+					display: block;
+				}
+			}
+
+			/* ---------- guide-line ruler (desktop) ----------
    One SVG strip. It starts under the header (Figma: lines begin at y 277 of the
    canvas) and runs to the section bottom. Its pattern tile is one 959px span
    (Section start line → Section end line): a solid line at the tile edge and
-   three evenly spaced dashed lines between. main.js sets top/left/width and
+   three evenly spaced dashed lines between. The script sets top/left/width and
    the tile size on refresh. */
-.nv-ruler {
-  position: absolute;
-  top: var(--nv-ruler-top, 0px);
-  bottom: 0;
-  left: var(--nv-ruler-left, 0px);
-  width: var(--nv-ruler-w, 300vw);
-  height: calc(100% - var(--nv-ruler-top, 0px));
-  overflow: visible;
-  pointer-events: none;
-  will-change: transform;
-}
-.nv-ruler__solid { fill: var(--nv-guide-solid); }
-.nv-ruler__dash { fill: var(--nv-guide); }
+			.problem-result_ruler {
+				position: absolute;
+				top: var(--nv-ruler-top, 0px);
+				left: var(--nv-ruler-left, 0px);
+				width: var(--nv-ruler-w, 300vw);
+				height: calc(100% - var(--nv-ruler-top, 0px));
+				overflow: visible;
+				pointer-events: none;
+				will-change: transform;
+			}
+			.problem-result_ruler_solid {
+				fill: var(--nv-guide-solid);
+			}
+			.problem-result_ruler_dash {
+				fill: var(--nv-guide);
+			}
 
-/* ---------- header (shared) ---------- */
-.nv-tabs { position: absolute; z-index: 2; display: flex; left: 50%; transform: translateX(-50%); }
-.nv-tab {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  height: 24px; padding: 0; border: 0; border-radius: 0; margin: 0;
-  background: rgba(255, 255, 255, .05); color: #fff; cursor: pointer;
-  font-family: Geist, system-ui, sans-serif;
-}
-.nv-tab:hover span { opacity: 1 !important; }
-.nv-tab__on { position: absolute; inset: 0; background: var(--nv-accent); }
-.nv-tab span { position: relative; text-transform: uppercase; white-space: nowrap; }
-.nv-tab--r .nv-tab__on { visibility: hidden; opacity: 0; }   /* initial: Problems active */
-.nv-tab--r span { opacity: .5; }
+			/* ---------- header (shared) ---------- */
+			.problem-result_tabs {
+				position: absolute;
+				z-index: 2;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+			.problem-result_tab {
+				height: 24px;
+				padding: 0;
+				margin: 0;
+				border: 0;
+				border-radius: 0;
+				background: rgba(255, 255, 255, 0.05);
+				color: var(--color-text-primary);
+			}
+			.problem-result_tab_bg {
+				position: absolute;
+				inset: 0;
+				background: var(--color-accent);
+			}
+			.problem-result_tab_label {
+				white-space: nowrap;
+			}
+			.problem-result_tab:hover .problem-result_tab_label {
+				opacity: 1 !important;
+			} /* beats GSAP's inline .5 */
+			.problem-result_tab.cc-results .problem-result_tab_bg {
+				visibility: hidden;
+				opacity: 0;
+			} /* initial: Problems active */
+			.problem-result_tab.cc-results .problem-result_tab_label {
+				opacity: 0.5;
+			}
 
-.nv-h3 {
-  position: absolute; text-align: center; color: #fff;
-  font-family: "P22 Mackinac Pro", Georgia, serif; font-weight: 500;
-}
-.nv-body { position: absolute; text-align: center; }
+			.problem-result_title {
+				position: absolute;
+			}
+			.problem-result_text {
+				position: absolute;
+			}
 
-/* desktop header */
-.nv-canvas--d .nv-tabs { top: 80px; }
-.nv-canvas--d .nv-tab--p { width: 83px; }
-.nv-canvas--d .nv-tab--r { width: 68px; }
-.nv-canvas--d .nv-tab span { font-size: 13px; line-height: 19px; letter-spacing: -0.026px; }
-.nv-canvas--d .nv-h3 { left: 329px; top: 120px; width: 501px; font-size: 32px; line-height: 40px; letter-spacing: -1.92px; }
-.nv-canvas--d .nv-body { left: 0; right: 0; top: 176px; font-size: 14px; line-height: 22px; letter-spacing: -0.056px; white-space: nowrap; }
+			/* desktop header */
+			.problem-result_canvas.cc-desktop .problem-result_tabs {
+				top: 80px;
+			}
+			.problem-result_canvas.cc-desktop .problem-result_tab {
+				width: 83px;
+			}
+			.problem-result_canvas.cc-desktop .problem-result_tab.cc-results {
+				width: 68px;
+			}
+			.problem-result_canvas.cc-desktop .problem-result_tab_label {
+				font-size: 13px;
+				line-height: 19px;
+				letter-spacing: -0.026px;
+			}
+			.problem-result_canvas.cc-desktop .problem-result_title {
+				left: 329px;
+				top: 120px;
+				width: 501px;
+			}
+			.problem-result_canvas.cc-desktop .problem-result_text {
+				left: 0;
+				right: 0;
+				top: 176px;
+				white-space: nowrap;
+			}
 
-/* ---------- desktop artwork ---------- */
-.nv-art { position: absolute; left: 0; top: 0; width: 1159px; height: 754px; overflow: visible; pointer-events: none; }
-.nv-leader { fill: #454545; }
+			/* ---------- artwork ---------- */
+			.problem-result_art {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 1159px;
+				height: 754px;
+				overflow: visible;
+				pointer-events: none;
+			}
+			.problem-result_art.cc-mobile {
+				width: 382px;
+				height: 801px;
+				/* desktop strokes are 1 unit; after scale(0.649) restore ~1 mobile px */
+				--nv-hl-w: 1.541;
+				--nv-ln-c: #3b3b3b;
+				--nv-ln-w: 0.55;
+			}
+			.problem-result_leader {
+				fill: #454545;
+			}
 
-/* ---------- number dots (HTML) ----------
-   Placed by their centre (left/top = centre in canvas px), so the
-   translate(-50%,-50%) keeps them centred; GSAP adds x/y on top. */
-.nv-dots { position: absolute; inset: 0; pointer-events: none; }
-.nv-dot {
-  position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px;
-  border-radius: 50%; background: var(--nv-accent);
-  box-shadow: 0 0 0 4px rgba(237, 90, 56, .16);
-  display: flex; align-items: center; justify-content: center;
-  font: 600 8px/1 Geist, system-ui, sans-serif; color: #fff;
-  font-variant-numeric: tabular-nums;
-  will-change: transform, opacity;
-}
-.nv-dot--sm { width: 6px; height: 6px; margin: -3px 0 0 -3px; }
+			/* Thickness hooks inside the shared <symbol>/<use> trees. Custom properties
+   inherit through <use> shadow trees, so the mobile <svg> can thicken lines
+   that the 0.649 down-scale would make hair-thin. */
+			.problem-result_outline {
+				stroke: var(--nv-ln-c, none);
+				stroke-width: var(--nv-ln-w, 0);
+			}
+			.problem-result_crack-line {
+				stroke-width: var(--nv-hl-w, 1);
+			}
 
-/* Thickness hooks used inside the shared <symbol>/<use> trees.
-   Custom properties inherit through <use> shadow trees, so the mobile <svg>
-   can thicken lines that the 0.649 down-scale would make hair-thin. */
-.nv-ln { stroke: var(--nv-ln-c, none); stroke-width: var(--nv-ln-w, 0); }
-.nv-hl { stroke-width: var(--nv-hl-w, 1); }
+			/* ---------- number dots (HTML) ----------
+   left/top = the dot's centre in canvas px; the negative margin centres the
+   box on it, and GSAP adds x/y on top. */
+			.problem-result_dots {
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+			}
+			.problem-result_dot {
+				position: absolute;
+				width: 14px;
+				height: 14px;
+				margin: -7px 0 0 -7px;
+				border-radius: 50%;
+				background: var(--color-accent);
+				box-shadow: 0 0 0 4px rgba(237, 90, 56, 0.16);
+				font: 600 8px/1 var(--font-body);
+				color: var(--color-text-primary);
+				font-variant-numeric: tabular-nums;
+				will-change: transform, opacity;
+			}
+			.problem-result_dot.cc-small {
+				width: 6px;
+				height: 6px;
+				margin: -3px 0 0 -3px;
+			}
 
-/* ---------- desktop chips ---------- */
-.nv-chips { position: absolute; inset: 0; pointer-events: none; }
-.nv-chip {
-  position: absolute; display: flex; align-items: center; justify-content: center; gap: 4px;
-  height: 25px; padding: 4px 8px;
-  background: rgba(255, 255, 255, .15);
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  font-family: "Geist Mono", ui-monospace, monospace; font-size: 13px; line-height: 17px;
-  letter-spacing: -0.13px; color: rgba(255, 255, 255, .78); white-space: nowrap;
-  will-change: transform, opacity;
-}
-.nv-chip .nv-ico { width: 12px; height: 12px; flex: none; fill: #fff; }
-.nv-chip--fixed { display: block; padding: 0; }
-.nv-chip--fixed .nv-ico { position: absolute; left: 8px; top: 7px; }
-.nv-chip--fixed .nv-ico--mid { top: 6.5px; }
-.nv-chip--fixed span { position: absolute; left: 28px; line-height: 19px; letter-spacing: -0.65px; white-space: normal; }
+			/* ---------- desktop chips ---------- */
+			.problem-result_chips {
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+			}
+			.problem-result_chip {
+				position: absolute;
+				gap: 4px;
+				height: 25px;
+				padding: 4px 8px;
+				background: rgba(255, 255, 255, 0.15);
+				-webkit-backdrop-filter: blur(4px);
+				backdrop-filter: blur(4px);
+				font-family: var(--font-mono);
+				font-size: 13px;
+				line-height: 17px;
+				letter-spacing: -0.13px;
+				color: rgba(255, 255, 255, 0.78);
+				white-space: nowrap;
+				will-change: transform, opacity;
+			}
+			.problem-result_chip_icon {
+				width: 12px;
+				height: 12px;
+				fill: var(--color-text-primary);
+			}
+			.problem-result_chip.cc-fixed {
+				display: block;
+				padding: 0;
+			}
+			.problem-result_chip.cc-fixed .problem-result_chip_icon {
+				position: absolute;
+				left: 8px;
+				top: 7px;
+			}
+			.problem-result_chip.cc-fixed .problem-result_chip_icon.cc-middle {
+				top: 6.5px;
+			}
+			.problem-result_chip.cc-fixed .problem-result_chip_text {
+				position: absolute;
+				left: 28px;
+				line-height: 19px;
+				letter-spacing: -0.65px;
+				white-space: normal;
+			}
+			.problem-result_chip.cc-fixed .problem-result_chip_text.cc-nowrap {
+				white-space: nowrap;
+			}
 
-/* ---------- mobile ---------- */
-.nv-canvas--m .nv-tabs { top: 44px; }
-.nv-canvas--m .nv-tab { width: 68px; }
-.nv-canvas--m .nv-tab span { font-size: 11px; line-height: 17px; letter-spacing: -0.022px; }
-.nv-canvas--m .nv-h3 { left: 55px; top: 80px; width: 273px; font-size: 24px; line-height: 32px; letter-spacing: -0.72px; }
-.nv-canvas--m .nv-body { left: 62px; top: 156px; width: 259px; font-size: 13px; line-height: 18px; color: #b6b7b4; }
+			/* ---------- mobile ---------- */
+			.problem-result_canvas.cc-mobile .problem-result_tabs {
+				top: 44px;
+			}
+			.problem-result_canvas.cc-mobile .problem-result_tab {
+				width: 68px;
+			}
+			.problem-result_canvas.cc-mobile .problem-result_tab_label {
+				font-size: 11px;
+				line-height: 17px;
+				letter-spacing: -0.022px;
+			}
+			.problem-result_canvas.cc-mobile .problem-result_title {
+				left: 55px;
+				top: 80px;
+				width: 273px;
+			}
+			.problem-result_canvas.cc-mobile .problem-result_text {
+				left: 62px;
+				top: 156px;
+				width: 259px;
+			}
 
-.nv-progress { position: absolute; left: 84.5px; top: 222.5px; width: 213px; height: 3px; overflow: visible; }
-.nv-progress path { fill: none; stroke-width: 3; stroke-linecap: round; }
-.nv-progress__base path { stroke: #5B5B5B; opacity: .24; }
-.nv-progress__on { stroke: var(--nv-accent); }
+			.problem-result_progress {
+				position: absolute;
+				left: 84.5px;
+				top: 222.5px;
+				width: 213px;
+				height: 3px;
+				overflow: visible;
+			}
+			.problem-result_progress_track,
+			.problem-result_progress_active {
+				fill: none;
+				stroke-width: 3;
+				stroke-linecap: round;
+			}
+			.problem-result_progress_track {
+				stroke: #5b5b5b;
+				opacity: 0.24;
+			}
+			.problem-result_progress_active {
+				stroke: var(--color-accent);
+			}
 
-.nv-m-frame {
-  position: absolute; left: 24px; top: 240px; width: 334px; height: 453px;
-  border: 1px solid rgba(255, 255, 255, .04);
-}
+			.problem-result_frame {
+				position: absolute;
+				left: 24px;
+				top: 240px;
+				width: 334px;
+				height: 453px;
+				border: 1px solid rgba(255, 255, 255, 0.04);
+			}
 
-.nv-m-art {
-  position: absolute; left: 0; top: 0; width: 382px; height: 801px; overflow: visible; pointer-events: none;
-  /* desktop strokes are 1 unit; after scale(0.649) restore ~1 mobile px */
-  --nv-hl-w: 1.541;
-  --nv-ln-c: #3B3B3B;
-  --nv-ln-w: .55;
-}
+			.problem-result_list {
+				position: absolute;
+				left: 48px;
+				top: 569px;
+				width: 286px;
+				height: 100px;
+			}
+			.problem-result_list_item {
+				position: absolute;
+				left: 0;
+				width: 286px;
+			}
+			.problem-result_list_icon {
+				position: absolute;
+				left: 0;
+				top: 5px;
+				width: 14px;
+				height: 14px;
+				fill: rgba(255, 255, 255, 0.78);
+			}
+			.problem-result_list_text {
+				margin-left: 22px;
+				width: 264px;
+				font-size: 14px;
+				line-height: 19px;
+				color: rgba(255, 255, 255, 0.78);
+			}
+			.problem-result_list_rule {
+				position: absolute;
+				left: 0;
+				width: 286px;
+				height: 1px;
+			}
+			.problem-result_list_rule-line,
+			.problem-result_costs_rule,
+			.problem-result_costs_sep-line {
+				display: block;
+				width: 286px;
+				height: 1px;
+				overflow: visible;
+				fill: none;
+				stroke: rgba(255, 255, 255, 0.04);
+			}
 
-.nv-m-list { position: absolute; left: 48px; top: 569px; width: 286px; height: 100px; }
-.nv-m-item { position: absolute; left: 0; width: 286px; }
-.nv-m-item .nv-ico { position: absolute; left: 0; top: 5px; width: 14px; height: 14px; fill: rgba(255, 255, 255, .78); }
-.nv-m-item p { margin-left: 22px; width: 264px; font-size: 14px; line-height: 19px; color: rgba(255, 255, 255, .78); }
-.nv-m-rule { position: absolute; left: 0; width: 286px; height: 1px; }
-.nv-m-rule svg, .nv-m-costs__rule, .nv-m-costs__sep svg { display: block; width: 286px; height: 1px; overflow: visible; fill: none; stroke: rgba(255, 255, 255, .04); }
+			/* step-4 panel */
+			.problem-result_panel {
+				position: absolute;
+				left: 25px;
+				top: 218px;
+				width: 334px;
+				height: 502px;
+				background: var(--color-accent);
+			}
+			.problem-result_panel_box {
+				position: absolute;
+				left: 16px;
+				top: 16px;
+				width: 302px;
+				height: 242px;
+				background: var(--color-bg-primary);
+			}
+			.problem-result_panel_grid {
+				position: absolute;
+				left: 16px;
+				top: 4px;
+				width: 300.5px;
+				height: 266px;
+				overflow: visible;
+			}
+			.problem-result_panel_grid-line {
+				fill: none;
+				stroke: rgba(255, 255, 255, 0.06);
+				stroke-width: 0.5;
+			}
+			.problem-result_costs {
+				position: absolute;
+				left: 49px;
+				top: 496px;
+				width: 286px;
+			}
+			.problem-result_costs_rule {
+				margin: 16px 0 11px;
+				stroke: rgba(255, 255, 255, 0.16);
+			}
+			.problem-result_costs_list {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+			}
+			.problem-result_costs_item {
+				font-size: 14px;
+				line-height: 19px;
+			}
+			.problem-result_costs_icon {
+				width: 14px;
+				height: 14px;
+				fill: var(--color-text-primary);
+			}
+			.problem-result_costs_text {
+				width: 264px;
+			}
+			.problem-result_costs_sep {
+				height: 0;
+			}
+			.problem-result_costs_sep-line {
+				stroke: rgba(255, 255, 255, 0.16);
+				transform: translateY(-0.5px);
+			}
 
-/* step-4 panel */
-.nv-m-panel { position: absolute; left: 25px; top: 218px; width: 334px; height: 502px; background: var(--nv-accent); }
-.nv-m-panel__box { position: absolute; left: 16px; top: 16px; width: 302px; height: 242px; background: var(--nv-bg); }
-.nv-m-panel__grid { position: absolute; left: 16px; top: 4px; width: 300.5px; height: 266px; overflow: visible; fill: none; stroke: rgba(255, 255, 255, .06); stroke-width: .5; }
-.nv-m-costs { position: absolute; left: 49px; top: 496px; width: 286px; }
-.nv-m-costs__title { font-family: "P22 Mackinac Pro", Georgia, serif; font-weight: 500; font-size: 18px; line-height: 24px; letter-spacing: -0.54px; color: #fff; }
-.nv-m-costs__rule { margin-top: 16px; stroke: rgba(255, 255, 255, .16); }
-.nv-m-costs__list { margin-top: 11px; display: flex; flex-direction: column; gap: 12px; }
-.nv-m-costs__list > li:not(.nv-m-costs__sep) { display: flex; align-items: center; justify-content: space-between; font-weight: 500; font-size: 14px; line-height: 19px; color: #fff; }
-.nv-m-costs__list .nv-ico { width: 14px; height: 14px; fill: #fff; flex: none; }
-.nv-m-costs__list span { width: 264px; }
-.nv-m-costs__sep { height: 0; }
-.nv-m-costs__sep svg { stroke: rgba(255, 255, 255, .16); transform: translateY(-.5px); }
+			/* buttons */
+			.problem-result_back {
+				position: absolute;
+				left: 24px;
+				top: 717px;
+				width: 40px;
+				height: 40px;
+				padding: 0;
+				border: 1px solid rgba(255, 255, 255, 0.13);
+				border-radius: 100px;
+				background: var(--color-bg-primary);
+			}
+			.problem-result_back_icon {
+				position: absolute;
+				inset: -1px;
+				width: 40px;
+				height: 40px;
+				fill: none;
+				stroke: var(--color-text-primary);
+				stroke-width: 1.6;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+			.problem-result_next {
+				position: absolute;
+				left: 72px;
+				top: 717px;
+				width: 286px;
+				height: 40px;
+				padding: 0;
+				border: 1px solid rgba(255, 255, 255, 0.13);
+				border-radius: 100px;
+				background: var(--color-accent);
+				text-align: left;
+			}
+			.problem-result_next_label {
+				position: absolute;
+				left: 17px;
+				top: 10px;
+				font-size: 14px;
+				line-height: 19px;
+				white-space: nowrap;
+			}
+			.problem-result_next_label.cc-result {
+				visibility: hidden;
+				opacity: 0;
+			}
+			.problem-result_next_icon {
+				position: absolute;
+				left: 252px;
+				top: 13.2px;
+				width: 12.7744px;
+				height: 11.6px;
+				overflow: visible;
+				fill: none;
+				stroke: var(--color-text-primary);
+				stroke-width: 1.6;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+			.problem-result_goback {
+				position: absolute;
+				left: 25px;
+				top: 740px;
+				width: 334px;
+				height: 40px;
+				padding: 0;
+				border: 1px solid rgba(255, 255, 255, 0.13);
+				border-radius: 100px;
+				background: var(--color-bg-primary);
+				font-size: 14px;
+				line-height: 19px;
+				text-align: center;
+			}
 
-/* buttons */
-.nv-pr button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.nv-m-back {
-  position: absolute; left: 24px; top: 717px; width: 40px; height: 40px; padding: 0;
-  border: 1px solid rgba(255, 255, 255, .13); border-radius: 100px; background: var(--nv-bg);
-}
-.nv-m-back svg { position: absolute; inset: -1px; width: 40px; height: 40px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.nv-m-next {
-  position: absolute; left: 72px; top: 717px; width: 286px; height: 40px; padding: 0;
-  border: 1px solid rgba(255, 255, 255, .13); border-radius: 100px; background: var(--nv-accent); text-align: left;
-}
-.nv-m-next__t { position: absolute; left: 17px; top: 10px; font-size: 14px; line-height: 19px; color: #fff; white-space: nowrap; }
-.nv-m-next__t[data-t="show"] { visibility: hidden; opacity: 0; }
-.nv-m-next__arrow { position: absolute; left: 252px; top: 13.2px; width: 12.7744px; height: 11.6px; overflow: visible; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.nv-m-goback {
-  position: absolute; left: 25px; top: 740px; width: 334px; height: 40px; padding: 0;
-  border: 1px solid rgba(255, 255, 255, .13); border-radius: 100px; background: var(--nv-bg);
-  font-size: 14px; line-height: 19px; color: #fff; text-align: center;
-}
-.nv-pr button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+			/* Step-4-only and later-step elements start hidden (GSAP owns them after init) */
+			.problem-result_panel,
+			.problem-result_costs,
+			.problem-result_goback,
+			.problem-result_list[data-mlist="2"],
+			.problem-result_list[data-mlist="3"] {
+				visibility: hidden;
+				opacity: 0;
+			}
 
-/* Step-4-only and later-step elements start hidden (GSAP owns them after init) */
-.nv-m-panel, .nv-m-costs, .nv-m-goback,
-.nv-m-list[data-mlist="2"], .nv-m-list[data-mlist="3"] { visibility: hidden; opacity: 0; }
+			/* animated elements */
+			.problem-result_list,
+			.problem-result_costs,
+			.problem-result_panel,
+			.problem-result_back,
+			.problem-result_next,
+			.problem-result_goback,
+			.problem-result_frame {
+				will-change: opacity;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="page-wrapper">
+			<main id="main">
+				<!-- demo section (not part of the build) -->
+				<section class="section-demo u-spacing-block u-spacing-inline">
+					<p class="demo_text u-text-regular u-text-center">Scroll down ↓</p>
+				</section>
 
-/* animated elements */
-.nv-m-list, .nv-m-costs, .nv-m-panel, .nv-m-back, .nv-m-next, .nv-m-goback, .nv-m-frame { will-change: opacity; }
-</style>
-</head>
-<body>
+				<!-- =================================================================
+         EMBED 1 · shared SVG library (place once, anywhere on the page)
+         Not display:none: gradients/clipPaths inside a display:none <svg>
+         stop rendering in Chrome/Firefox.
+         ================================================================= -->
+				<svg class="problem-result_sprite" aria-hidden="true" focusable="false" width="0" height="0">
+					<defs>
+						<linearGradient id="nv-g-87a0" x1="24.8123" y1="21.8061" x2="26.8694" y2="14.5677" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#1F1F1F" />
+							<stop offset="1" stop-color="#333333" />
+						</linearGradient>
+						<linearGradient id="nv-g-89a0" x1="8.56427" y1="75.0886" x2="11.4376" y2="68.9545" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#1F1F1F" />
+							<stop offset="1" stop-color="#333333" />
+						</linearGradient>
+						<linearGradient id="nv-g-88a0" x1="13.1908" y1="26.3938" x2="12.8492" y2="34.8569" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#1F1F1F" />
+							<stop offset="1" stop-color="#333333" />
+						</linearGradient>
+						<linearGradient id="nv-g-86a0" x1="21.6647" y1="61.6135" x2="28.7887" y2="54.7414" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#1F1F1F" />
+							<stop offset="1" stop-color="#333333" />
+						</linearGradient>
+						<linearGradient id="nv-g-89late0" x1="17.399" y1="148.602" x2="32.7305" y2="131.917" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#1F1F1F" />
+							<stop offset="1" stop-color="#333333" />
+						</linearGradient>
+						<linearGradient id="nv-g-89late1" x1="64.2893" y1="34.1116" x2="89.2956" y2="16.3798" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#1F1F1F" />
+							<stop offset="1" stop-color="#333333" />
+						</linearGradient>
+						<clipPath id="nv-clip-87">
+							<path
+								d="M89.1367 24.3474L89.1369 24.3461V24.3477L89.1367 24.3474L77.0627 79.8461L2.39444 50.8174L0 26.3399L10.3763 22.0829L33.2577 29.0006L43.1021 5.0549L65.7174 0L89.1367 24.3474Z"
+							/>
+						</clipPath>
+						<clipPath id="nv-clip-89">
+							<path
+								d="M211 313.141L0 147.641L111.903 98.5964L117.94 77.9045L146.742 69.3612L175.72 29.9338L170.826 0L325.5 91.1406L286.5 101.141L264.5 127.141L280.5 183.141H235.5L253.5 225.641L228 239.641L211 313.141Z"
+							/>
+						</clipPath>
+						<clipPath id="nv-clip-88">
+							<path
+								d="M17 148.5L0 222L94.8319 248.48L92.4375 223.996L102.816 219.734L125.69 226.653L135.54 202.708L158.156 197.652L166.13 205.963L198 39L114.5 0L75.5 10L53.5 36L69.5 92H24.5L42.5 134.5L17 148.5Z"
+							/>
+						</clipPath>
+						<clipPath id="nv-clip-86"><path d="M0 77.4438L41.6373 0L105.948 40.354L110.848 70.2754L81.8998 109.703L53.0839 118.264L47.043 138.942L29.4849 143.196L0 77.4438Z" /></clipPath>
+						<!-- the intact isometric browser ("Base Animated Frame" 18:64), defined once -->
+						<symbol id="nv-browser" viewBox="0 0 280 367" overflow="visible" fill="none">
+							<path d="M20.0938 0.3431L279.901 150.343V354.343L20.0937 204.343Z" fill="#242424" />
+							<path d="M0 12.1244L21 0V204L0 216.1244Z" fill="#242424" />
+							<path d="M259 162.4993L280 150.3750V354.1250L259 366.2493Z" fill="#242424" />
+							<path
+								class="problem-result_outline"
+								d="M20.5268 1.09314V0.59314L20.0938 0.34314V0.84314L20.5268 1.09314ZM279.468 150.593L279.901 150.843V150.343L279.468 150.093V150.593ZM279.468 353.593V354.093L279.901 354.343V353.843L279.468 353.593ZM20.5268 204.093L20.0937 203.843V204.343L20.5268 204.593V204.093ZM20.5268 1.09314V1.59314L279.468 151.093V150.593V150.093L20.5268 0.59314V1.09314ZM279.468 150.593L279.035 150.343V353.343L279.468 353.593L279.901 353.843V150.843L279.468 150.593ZM279.468 353.593V353.093L20.5268 203.593V204.093V204.593L279.468 354.093V353.593ZM20.5268 204.093L20.9598 204.343L20.9598 1.34314L20.5268 1.09314L20.0938 0.84314L20.0937 203.843L20.5268 204.093Z"
+								fill="#3B3B3B"
+							/>
+							<rect width="297.306" height="21.1564" transform="matrix(0.866025 0.5 -0.866025 0.5 20.322 1.00012)" fill="#3B3B3B" />
+							<path
+								class="problem-result_outline"
+								d="M0.433013 12.3744V11.8744L0 12.1244L0 12.6244L0.433013 12.3744ZM20.567 0.750033L21 0.500033V3.33786e-05L20.567 0.250033V0.750033ZM20.567 203.75V204.25L21 204V203.5L20.567 203.75ZM0.433013 215.374L0 215.624L0 216.124L0.433013 215.874L0.433013 215.374ZM0.433013 12.3744L0.433013 12.8744L20.567 1.25003V0.750033V0.250033L0.433013 11.8744V12.3744ZM20.567 0.750033L20.134 1.00003L20.134 204L20.567 203.75L21 203.5L21 0.500033L20.567 0.750033ZM20.567 203.75V203.25L0.433013 214.874V215.374L0.433013 215.874L20.567 204.25V203.75ZM0.433013 215.374L0.866025 215.124L0.866025 12.1244L0.433013 12.3744L0 12.6244L0 215.624L0.433013 215.374Z"
+								fill="#3B3B3B"
+							/>
+							<path
+								class="problem-result_outline"
+								d="M259.433 162.499V161.999L259 162.249V162.749L259.433 162.499ZM279.567 150.875L280 150.625V150.125L279.567 150.375V150.875ZM279.567 353.875V354.375L280 354.125V353.625L279.567 353.875ZM259.433 365.499L259 365.749V366.249L259.433 365.999V365.499ZM259.433 162.499V162.999L279.567 151.375V150.875V150.375L259.433 161.999V162.499ZM279.567 150.875L279.134 151.125V354.125L279.567 353.875L280 353.625V150.625L279.567 150.875ZM279.567 353.875V353.375L259.433 364.999V365.499V365.999L279.567 354.375V353.875ZM259.433 365.499L259.866 365.249V162.249L259.433 162.499L259 162.749V365.749L259.433 365.499Z"
+								fill="#3B3B3B"
+							/>
+							<g>
+								<rect width="300" height="204" transform="matrix(0.866025 0.5 0 1 0.09375 12.3431)" fill="#242424" />
+								<path
+									class="problem-result_outline"
+									d="M0.526763 13.0931V12.5931L0.09375 12.3431L0.09375 12.8431L0.526763 13.0931ZM259.468 162.593L259.901 162.843V162.343L259.468 162.093V162.593ZM259.468 365.593V366.093L259.901 366.343V365.843L259.468 365.593ZM0.526763 216.093L0.09375 215.843L0.09375 216.343L0.526763 216.593V216.093ZM0.526763 13.0931V13.5931L259.468 163.093V162.593V162.093L0.526763 12.5931V13.0931ZM259.468 162.593L259.035 162.343V365.343L259.468 365.593L259.901 365.843V162.843L259.468 162.593ZM259.468 365.593V365.093L0.526763 215.593V216.093V216.593L259.468 366.093V365.593ZM0.526763 216.093L0.959775 216.343L0.959775 13.3431L0.526763 13.0931L0.09375 12.8431L0.09375 215.843L0.526763 216.093Z"
+									fill="#3B3B3B"
+								/>
+							</g>
+							<g>
+								<rect width="196.3" height="87.2553" transform="matrix(0.866025 0.5 0 1 45 155.015)" fill="#242424" />
+								<path
+									class="problem-result_outline"
+									d="M45.433 155.765V155.265L45 155.015V155.515L45.433 155.765ZM214.568 253.415L215.001 253.665V253.165L214.568 252.915V253.415ZM214.568 339.67V340.17L215.001 340.42V339.92L214.568 339.67ZM45.433 242.02L45 241.77V242.27L45.433 242.52V242.02ZM45.433 155.765V156.265L214.568 253.915V253.415V252.915L45.433 155.265V155.765ZM214.568 253.415L214.135 253.165V339.42L214.568 339.67L215.001 339.92V253.665L214.568 253.415ZM214.568 339.67V339.17L45.433 241.52V242.02V242.52L214.568 340.17V339.67ZM45.433 242.02L45.866 242.27L45.866 156.015L45.433 155.765L45 155.515L45 241.77L45.433 242.02Z"
+									fill="#3B3B3B"
+								/>
+							</g>
+							<g>
+								<rect width="99.3054" height="10" transform="matrix(0.866025 0.5 0 1 87 116.374)" fill="#242424" />
+								<path
+									class="problem-result_outline"
+									d="M87.433 117.124V116.624L87 116.374V116.874L87.433 117.124ZM172.568 166.277L173.001 166.527V166.027L172.568 165.777V166.277ZM172.568 175.277V175.777L173.001 176.027V175.527L172.568 175.277ZM87.433 126.124L87 125.874V126.374L87.433 126.624V126.124ZM87.433 117.124V117.624L172.568 166.777V166.277V165.777L87.433 116.624V117.124ZM172.568 166.277L172.135 166.027V175.027L172.568 175.277L173.001 175.527V166.527L172.568 166.277ZM172.568 175.277V174.777L87.433 125.624V126.124V126.624L172.568 175.777V175.277ZM87.433 126.124L87.866 126.374V117.374L87.433 117.124L87 116.874V125.874L87.433 126.124Z"
+									fill="#3B3B3B"
+								/>
+							</g>
+							<g>
+								<rect width="159.348" height="10" transform="matrix(0.866025 0.5 0 1 61 118.113)" fill="#242424" />
+								<path
+									class="problem-result_outline"
+									d="M61.433 118.863V118.363L61 118.113V118.613L61.433 118.863ZM198.566 198.036L198.999 198.286V197.786L198.566 197.536V198.036ZM198.566 207.036V207.536L198.999 207.786V207.286L198.566 207.036ZM61.433 127.863L61 127.613V128.113L61.433 128.363V127.863ZM61.433 118.863V119.363L198.566 198.536V198.036V197.536L61.433 118.363V118.863ZM198.566 198.036L198.133 197.786V206.786L198.566 207.036L198.999 207.286V198.286L198.566 198.036ZM198.566 207.036V206.536L61.433 127.363V127.863V128.363L198.566 207.536V207.036ZM61.433 127.863L61.866 128.113V119.113L61.433 118.863L61 118.613V127.613L61.433 127.863Z"
+									fill="#3B3B3B"
+								/>
+							</g>
+							<path
+								class="problem-result_outline"
+								d="M0.526763 13.0931V12.5931L0.09375 12.3431L0.09375 12.8431L0.526763 13.0931ZM259.468 162.593L259.901 162.843V162.343L259.468 162.093V162.593ZM259.468 189.593V190.093L259.901 190.343V189.843L259.468 189.593ZM0.526763 40.0931L0.09375 39.8431L0.09375 40.3431L0.526763 40.5931V40.0931ZM0.526763 13.0931V13.5931L259.468 163.093V162.593V162.093L0.526763 12.5931V13.0931ZM259.468 162.593L259.035 162.343V189.343L259.468 189.593L259.901 189.843V162.843L259.468 162.593ZM259.468 189.593V189.093L0.526763 39.5931V40.0931V40.5931L259.468 190.093V189.593ZM0.526763 40.0931L0.959775 40.3431L0.959775 13.3431L0.526763 13.0931L0.09375 12.8431L0.09375 39.8431L0.526763 40.0931Z"
+								fill="#3B3B3B"
+							/>
+							<path
+								class="problem-result_outline"
+								d="M12.4239 29.3431V29.8431C14.337 30.9477 15.888 33.634 15.888 35.8431L16.321 36.0931L16.754 36.3431C16.754 33.5817 14.8153 30.2239 12.4239 28.8431V29.3431ZM16.321 36.0931L15.888 35.8431C15.888 38.0523 14.337 38.9477 12.4239 37.8431V38.3431V38.8431C14.8153 40.2239 16.754 39.1046 16.754 36.3431L16.321 36.0931ZM12.4239 38.3431V37.8431C10.5107 36.7386 8.95978 34.0523 8.95978 31.8431L8.52676 31.5931L8.09375 31.3431C8.09375 34.1046 10.0324 37.4624 12.4239 38.8431V38.3431ZM8.52676 31.5931L8.95978 31.8431C8.95978 29.634 10.5107 28.7386 12.4239 29.8431V29.3431V28.8431C10.0324 27.4624 8.09375 28.5817 8.09375 31.3431L8.52676 31.5931Z"
+								fill="#3B3B3B"
+							/>
+							<path
+								class="problem-result_outline"
+								d="M25.3301 37.1244V37.6244C27.2433 38.729 28.7942 41.4153 28.7942 43.6244L29.2272 43.8744L29.6603 44.1244C29.6603 41.363 27.7216 38.0051 25.3301 36.6244V37.1244ZM29.2272 43.8744L28.7942 43.6244C28.7942 45.8335 27.2433 46.729 25.3301 45.6244V46.1244V46.6244C27.7216 48.0051 29.6603 46.8858 29.6603 44.1244L29.2272 43.8744ZM25.3301 46.1244V45.6244C23.417 44.5198 21.866 41.8335 21.866 39.6244L21.433 39.3744L21 39.1244C21 41.8858 22.9387 45.2437 25.3301 46.6244V46.1244ZM21.433 39.3744L21.866 39.6244C21.866 37.4153 23.417 36.5198 25.3301 37.6244V37.1244V36.6244C22.9387 35.2437 21 36.363 21 39.1244L21.433 39.3744Z"
+								fill="#3B3B3B"
+							/>
+							<path
+								class="problem-result_outline"
+								d="M38.3301 45.1244V45.6244C40.2433 46.729 41.7942 49.4153 41.7942 51.6244L42.2272 51.8744L42.6603 52.1244C42.6603 49.363 40.7216 46.0051 38.3301 44.6244V45.1244ZM42.2272 51.8744L41.7942 51.6244C41.7942 53.8335 40.2433 54.729 38.3301 53.6244V54.1244V54.6244C40.7216 56.0051 42.6603 54.8858 42.6603 52.1244L42.2272 51.8744ZM38.3301 54.1244V53.6244C36.417 52.5198 34.866 49.8335 34.866 47.6244L34.433 47.3744L34 47.1244C34 49.8858 35.9387 53.2437 38.3301 54.6244V54.1244ZM34.433 47.3744L34.866 47.6244C34.866 45.4153 36.417 44.5198 38.3301 45.6244V45.1244V44.6244C35.9387 43.2437 34 44.363 34 47.1244L34.433 47.3744Z"
+								fill="#3B3B3B"
+							/>
+							<g>
+								<path
+									d="M68.933 69.2404L67.2286 61.8964L68.1847 62.4484L69.4734 68.4964L70.7828 63.9484L71.7181 64.4884L73.0275 70.5484L74.3266 65.9944L75.2827 66.5464L73.5783 71.9224L72.4767 71.2864L71.2505 65.7424L70.0242 69.8704L68.933 69.2404ZM77.4478 74.1564L75.7434 66.8124L76.6995 67.3644L77.9882 73.4124L79.2976 68.8644L80.2329 69.4044L81.5423 75.4644L82.8414 70.9104L83.7975 71.4624L82.0931 76.8384L80.9915 76.2024L79.7652 70.6584L78.5389 74.7864L77.4478 74.1564ZM85.9625 79.0724L84.2582 71.7284L85.2143 72.2804L86.5029 78.3284L87.8124 73.7804L88.7477 74.3204L90.0571 80.3804L91.3562 75.8264L92.3122 76.3784L90.6079 81.7544L89.5063 81.1184L88.28 75.5744L87.0537 79.7024L85.9625 79.0724ZM92.3826 82.779V81.423L93.5569 82.101V83.457L92.3826 82.779ZM131.922 105.607V104.251L133.096 104.929V106.285L131.922 105.607ZM136.538 108.416C136.025 108.12 135.578 107.726 135.197 107.234C134.823 106.746 134.532 106.194 134.324 105.578C134.117 104.954 134.013 104.306 134.013 103.634C134.013 102.962 134.117 102.438 134.324 102.062C134.532 101.686 134.823 101.47 135.197 101.414C135.578 101.354 136.025 101.472 136.538 101.768C136.961 102.012 137.335 102.316 137.66 102.68C137.993 103.04 138.263 103.444 138.471 103.892C138.679 104.34 138.814 104.818 138.876 105.326L137.962 104.87C137.899 104.41 137.74 103.994 137.484 103.622C137.227 103.242 136.912 102.944 136.538 102.728C136.032 102.436 135.637 102.42 135.353 102.68C135.069 102.932 134.927 103.426 134.927 104.162C134.927 104.898 135.069 105.56 135.353 106.148C135.637 106.728 136.032 107.164 136.538 107.456C136.912 107.672 137.227 107.734 137.484 107.642C137.74 107.55 137.899 107.282 137.962 106.838L138.876 107.438C138.814 107.874 138.679 108.208 138.471 108.44C138.263 108.664 137.993 108.776 137.66 108.776C137.335 108.78 136.961 108.66 136.538 108.416ZM142.11 111.633C141.604 111.341 141.16 110.949 140.779 110.457C140.398 109.965 140.104 109.411 139.896 108.795C139.688 108.171 139.584 107.523 139.584 106.851C139.584 106.171 139.688 105.643 139.896 105.267C140.104 104.891 140.398 104.677 140.779 104.625C141.16 104.573 141.604 104.693 142.11 104.985C142.615 105.277 143.055 105.667 143.429 106.155C143.811 106.647 144.105 107.201 144.313 107.817C144.521 108.433 144.625 109.081 144.625 109.761C144.625 110.433 144.521 110.961 144.313 111.345C144.105 111.721 143.811 111.935 143.429 111.987C143.055 112.043 142.615 111.925 142.11 111.633ZM142.11 110.673C142.615 110.965 143.007 110.983 143.284 110.727C143.568 110.467 143.71 109.969 143.71 109.233C143.71 108.497 143.568 107.839 143.284 107.259C143.007 106.675 142.615 106.237 142.11 105.945C141.604 105.653 141.209 105.637 140.925 105.897C140.641 106.149 140.499 106.643 140.499 107.379C140.499 108.115 140.641 108.777 140.925 109.365C141.209 109.945 141.604 110.381 142.11 110.673ZM145.814 113.628V107.268L146.614 107.73L146.646 109.356L146.521 109.236C146.583 108.92 146.691 108.682 146.843 108.522C147.002 108.358 147.196 108.274 147.425 108.27C147.654 108.258 147.907 108.332 148.184 108.492C148.662 108.768 149.05 109.144 149.348 109.62C149.652 110.1 149.843 110.634 149.919 111.222L149.753 111.114C149.808 110.778 149.909 110.528 150.054 110.364C150.207 110.196 150.401 110.112 150.636 110.112C150.872 110.112 151.142 110.2 151.447 110.376C151.842 110.604 152.174 110.892 152.445 111.24C152.715 111.58 152.919 111.97 153.058 112.41C153.196 112.85 153.266 113.326 153.266 113.838V117.93L152.393 117.426V113.55C152.393 112.974 152.296 112.486 152.102 112.086C151.908 111.678 151.62 111.364 151.239 111.144C150.983 110.996 150.758 110.938 150.564 110.97C150.376 111.006 150.231 111.13 150.127 111.342C150.023 111.546 149.971 111.84 149.971 112.224V116.028L149.098 115.524V111.72C149.098 111.152 149.012 110.658 148.838 110.238C148.665 109.818 148.374 109.49 147.965 109.254C147.709 109.106 147.484 109.048 147.29 109.08C147.103 109.116 146.954 109.238 146.843 109.446C146.739 109.658 146.687 109.952 146.687 110.328V114.132L145.814 113.628Z"
+									fill="white"
+									fill-opacity="0.4"
+								/>
+								<path
+									d="M94.6702 85.8998V85.0118L95.3042 85.3778C95.4982 85.4898 95.6402 85.5358 95.7303 85.5158C95.8273 85.5078 95.9 85.4418 95.9485 85.3178L96.1459 84.8318L95.8446 84.6578L93.8285 77.2538L94.7846 77.8058L96.4265 84.0578L97.9958 79.6598L98.9519 80.2118L96.7175 86.0858C96.6136 86.3698 96.4577 86.5318 96.2499 86.5718C96.042 86.6118 95.7545 86.5258 95.3873 86.3138L94.6702 85.8998ZM101.89 88.4123C101.384 88.1203 100.941 87.7283 100.56 87.2363C100.179 86.7443 99.8845 86.1903 99.6767 85.5743C99.4688 84.9503 99.3649 84.3023 99.3649 83.6303C99.3649 82.9503 99.4688 82.4223 99.6767 82.0463C99.8845 81.6703 100.179 81.4563 100.56 81.4043C100.941 81.3523 101.384 81.4723 101.89 81.7643C102.396 82.0563 102.836 82.4463 103.21 82.9343C103.591 83.4263 103.886 83.9803 104.093 84.5963C104.301 85.2123 104.405 85.8603 104.405 86.5403C104.405 87.2123 104.301 87.7403 104.093 88.1243C103.886 88.5003 103.591 88.7143 103.21 88.7663C102.836 88.8223 102.396 88.7043 101.89 88.4123ZM101.89 87.4523C102.396 87.7443 102.787 87.7623 103.065 87.5063C103.349 87.2463 103.491 86.7483 103.491 86.0123C103.491 85.2763 103.349 84.6183 103.065 84.0383C102.787 83.4543 102.396 83.0163 101.89 82.7243C101.384 82.4323 100.99 82.4163 100.705 82.6763C100.421 82.9283 100.279 83.4223 100.279 84.1583C100.279 84.8943 100.421 85.5563 100.705 86.1443C100.99 86.7243 101.384 87.1603 101.89 87.4523ZM107.403 91.5951C106.856 91.2791 106.416 90.8131 106.083 90.1971C105.758 89.5771 105.595 88.8911 105.595 88.1391V84.0471L106.468 84.5511V88.3671C106.468 88.9831 106.561 89.4931 106.748 89.8971C106.942 90.2971 107.237 90.6111 107.632 90.8391C108.068 91.0911 108.411 91.1291 108.661 90.9531C108.91 90.7691 109.035 90.3931 109.035 89.8251V86.0331L109.908 86.5371V92.8971L109.076 92.4171V90.8451L109.211 91.0071C109.1 91.4631 108.889 91.7451 108.577 91.8531C108.266 91.9531 107.874 91.8671 107.403 91.5951ZM111.572 93.8583V87.4983L112.341 87.9423L112.383 89.5743L112.3 89.4903C112.369 88.9863 112.518 88.6763 112.747 88.5603C112.982 88.4403 113.294 88.4923 113.682 88.7163L114.222 89.0283V89.9883L113.692 89.6823C113.415 89.5223 113.183 89.4483 112.996 89.4603C112.816 89.4683 112.677 89.5603 112.58 89.7363C112.49 89.9083 112.445 90.1703 112.445 90.5223V94.3623L111.572 93.8583ZM117.1 97.1935C116.608 96.9095 116.189 96.5755 115.842 96.1915C115.503 95.8115 115.236 95.4055 115.042 94.9735C114.855 94.5375 114.748 94.1035 114.72 93.6715L115.634 94.1275C115.69 94.5435 115.832 94.9335 116.061 95.2975C116.289 95.6535 116.636 95.9655 117.1 96.2335C117.474 96.4495 117.772 96.5535 117.993 96.5455C118.222 96.5335 118.336 96.3715 118.336 96.0595C118.336 95.8915 118.302 95.7315 118.233 95.5795C118.163 95.4275 118.028 95.2535 117.827 95.0575C117.626 94.8535 117.328 94.5975 116.933 94.2895C116.407 93.8735 115.991 93.4975 115.686 93.1615C115.388 92.8215 115.174 92.4935 115.042 92.1775C114.917 91.8575 114.855 91.5295 114.855 91.1935C114.855 90.6255 115.035 90.2655 115.395 90.1135C115.756 89.9535 116.268 90.0655 116.933 90.4495C117.384 90.7095 117.761 91.0235 118.066 91.3915C118.378 91.7555 118.621 92.1435 118.794 92.5555C118.974 92.9635 119.092 93.3675 119.147 93.7675L118.233 93.3115C118.191 93.0635 118.115 92.8235 118.004 92.5915C117.893 92.3515 117.748 92.1315 117.567 91.9315C117.387 91.7235 117.173 91.5475 116.923 91.4035C116.528 91.1755 116.237 91.0955 116.05 91.1635C115.863 91.2315 115.77 91.4015 115.77 91.6735C115.77 91.8815 115.811 92.0775 115.894 92.2615C115.984 92.4415 116.126 92.6315 116.32 92.8315C116.514 93.0235 116.774 93.2455 117.1 93.4975C117.661 93.9335 118.097 94.3215 118.409 94.6615C118.721 95.0015 118.939 95.3235 119.064 95.6275C119.189 95.9315 119.251 96.2515 119.251 96.5875C119.251 96.9795 119.154 97.2595 118.96 97.4275C118.773 97.5915 118.517 97.6515 118.191 97.6075C117.872 97.5675 117.509 97.4295 117.1 97.1935ZM120.442 98.9794V92.6194L121.315 93.1234V99.4834L120.442 98.9794ZM120.422 91.6114V90.4354L121.336 90.9634V92.1394L120.422 91.6114ZM124.58 101.368C124.081 101.08 123.71 100.734 123.468 100.33C123.232 99.93 123.114 99.45 123.114 98.89V92.674L123.987 93.178V99.37C123.987 99.658 124.043 99.89 124.154 100.066C124.264 100.242 124.434 100.396 124.663 100.528L125.453 100.984V101.872L124.58 101.368ZM122.304 94.582V93.694L125.453 95.512V96.4L122.304 94.582ZM128.622 103.846C128.102 103.546 127.652 103.15 127.271 102.658C126.897 102.17 126.606 101.618 126.398 101.002C126.197 100.382 126.097 99.7359 126.097 99.0639C126.097 98.3919 126.197 97.8659 126.398 97.4859C126.606 97.1099 126.893 96.8919 127.261 96.8319C127.635 96.7679 128.075 96.8819 128.58 97.1739C129.058 97.4499 129.481 97.8259 129.848 98.3019C130.215 98.7699 130.5 99.3099 130.7 99.9219C130.908 100.538 131.012 101.202 131.012 101.914V102.214L127.011 99.9039C127.046 100.604 127.202 101.206 127.479 101.71C127.763 102.218 128.144 102.61 128.622 102.886C128.982 103.094 129.277 103.168 129.505 103.108C129.741 103.044 129.904 102.878 129.994 102.61L130.929 103.234C130.784 103.718 130.506 104.026 130.098 104.158C129.696 104.286 129.204 104.182 128.622 103.846ZM127.011 99.0159L130.056 100.774C130.015 100.134 129.859 99.5919 129.588 99.1479C129.325 98.7079 128.989 98.3699 128.58 98.1339C128.158 97.8899 127.808 97.8399 127.531 97.9839C127.261 98.1239 127.087 98.4679 127.011 99.0159Z"
+									fill="white"
+									fill-opacity="0.8"
+								/>
+							</g>
+						</symbol>
+						<!-- each fragment = clipPath ("Mask Shape") + clipped <use> of the browser
+             + "Broken Parts Highlight" crack lines, in fragment-local coords
+             (origin = the fragment's Step-2 position) -->
+						<g id="nv-frag-87">
+							<g clip-path="url(#nv-clip-87)"><use href="#nv-browser" x="-206.4355" y="-299.7767" width="280" height="367" /></g>
+							<g fill="none" transform="translate(-0.5337 -0.5494)">
+								<path d="M10.9108 22.633L17.8664 16.8423L38.7138 17.5778L33.7922 29.5506L10.9108 22.633Z" fill="url(#nv-g-87a0)" />
+								<path
+									d="M73.5685 8.15663L66.2512 0.549316L43.6359 5.60422L33.7915 29.5499L10.9101 22.6322L0.533813 26.8892L1.46735 36.4324"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+								<path
+									d="M73.5692 8.15663L66.2519 0.549316L43.6365 5.60422L33.7922 29.5499L10.9108 22.6322L17.8664 16.8416L38.7138 17.577"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+							</g>
+						</g>
+						<g id="nv-frag-89">
+							<g clip-path="url(#nv-clip-89)"><use href="#nv-browser" x="97.002" y="-10.9798" width="280" height="367" /></g>
+							<g fill="none" transform="translate(96.9746 22.4266)">
+								<path d="M0.500004 82.4934L14.9283 76.1698L16.6285 70.3424L0.5 78.2693L0.500004 82.4934Z" fill="url(#nv-g-89a0)" />
+								<path d="M77.5308 0.0806885L78.745 7.50753L49.7677 46.9349L20.9655 55.4783L14.9283 76.1702L0.5 82.4937" stroke="#3B3B3B" class="problem-result_crack-line" />
+								<path d="M16.6285 70.3424L0.5 78.2693V83.0253" stroke="#3B3B3B" class="problem-result_crack-line" />
+							</g>
+						</g>
+						<g id="nv-frag-88">
+							<g clip-path="url(#nv-clip-88)"><use href="#nv-browser" x="-113.998" y="-102.1224" width="280" height="367" /></g>
+							<g fill="none" transform="translate(91.911 197.103)">
+								<path d="M10.9057 22.6315L33.7797 29.5505L12.7108 25.8132L1.26265 36.3382L0.526794 26.8932L10.9057 22.6315Z" fill="url(#nv-g-88a0)" />
+								<path
+									d="M74.2193 8.86018L66.2455 0.549438L43.6296 5.60526L33.7797 29.5505M33.7797 29.5505L10.9057 22.6315L0.526794 26.8932L1.26265 36.3382L12.7108 25.8132L33.7797 29.5505Z"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+							</g>
+							<g fill="none" transform="translate(8.136 5.248)">
+								<path
+									d="M0.487122 179.472L8.86459 143.252L34.3646 129.252L16.3646 86.752H61.3646L45.3646 30.752L67.3646 4.75199L84.0083 0.484375"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+								<path d="M16.659 86.2324L22.6277 74.3438L59.5715 81.2956L60.7257 86.2324H16.659Z" fill-rule="evenodd" clip-rule="evenodd" fill="#242424" />
+								<path
+									d="M0.487122 179.472L5.36407 158.752L11.3641 129.6L29.8641 118.252L16.3646 86.752L22.6847 74.3726L59.4866 81.093L45.3646 30.752L67.3646 4.75199L84.0083 0.484375"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+							</g>
+						</g>
+						<g id="nv-frag-86">
+							<g clip-path="url(#nv-clip-86)"><use href="#nv-browser" x="32.1387" y="29.3776" width="280" height="367" /></g>
+							<g fill="none" transform="translate(32.324 63.214)">
+								<path d="M20.7603 55.0494L14.7193 75.7273L28.6101 52.5671L20.7603 55.0494Z" fill="url(#nv-g-86a0)" />
+								<path d="M0.117737 79.2648L14.7197 75.7273L20.7607 55.0493L49.5765 46.4887L78.5249 7.06078L77.3818 0.0808105" stroke="#3B3B3B" class="problem-result_crack-line" />
+								<path d="M28.6101 52.5671L14.7193 75.7273" stroke="#3B3B3B" class="problem-result_crack-line" />
+							</g>
+						</g>
+						<g id="nv-frag-89-late">
+							<g fill="none" transform="translate(219.1886 96.5646)">
+								<path
+									d="M0.487061 179.065L8.81104 143.076L34.311 129.076L16.311 86.5757H61.311L45.311 30.5757L67.311 4.57565L83.267 0.484375"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+								<path
+									d="M0.487061 179.065L12.0857 145.372L34.311 129.076L16.311 86.5757H61.311L56.9863 34.1625L83.267 10.9035V0.484375"
+									stroke="#3B3B3B"
+									class="problem-result_crack-line"
+								/>
+								<path d="M34.311 129.076L12.0857 145.373L0.487061 179.065L8.81104 143.076L34.311 129.076Z" fill-rule="evenodd" clip-rule="evenodd" fill="url(#nv-g-89late0)" />
+								<path
+									d="M61.3113 86.5757L45.3113 30.5757L67.3113 4.57565L83.2673 0.484375V10.9035L56.9865 34.1625L61.3113 86.5757Z"
+									fill-rule="evenodd"
+									clip-rule="evenodd"
+									fill="url(#nv-g-89late1)"
+								/>
+							</g>
+						</g>
+						<symbol id="nv-warn" viewBox="-0.2854 -0.5715 12 12">
+							<path
+								d="M10.8555 9.14258H11.4292V10.2863H10.8555V9.14258ZM10.2871 7.99805H10.8571V9.1418H10.2871V7.99805ZM0.570313 10.2871H10.8566V10.8571H0.570313V10.2871ZM9.7168 6.85547H10.2868V7.99922H9.7168V6.85547ZM9.1425 5.715H9.71625V6.855H9.1425V5.715ZM8.57227 4.57031H9.14227V5.71406H8.57227V4.57031ZM7.99805 3.42773H8.5718V4.57148H7.99805V3.42773ZM7.42969 2.2832H7.99969V3.42695H7.42969V2.2832ZM6.85938 1.14453H7.42937V2.28453H6.85938V1.14453ZM6.28516 0.570312H6.85891V1.14406H6.28516V0.570312ZM5.14031 9.14297H6.28406V8.57297H6.85781V7.42922H6.28406V6.85547H5.14031V7.42922H4.57031V8.57297H5.14031V9.14297ZM5.14063 2.85742H6.28437V6.28492H5.14063V2.85742ZM5.14063 0H6.28437V0.57H5.14063V0ZM4.57031 0.570312H5.14031V1.14406H4.57031V0.570312ZM4.00195 1.14453H4.57195V2.28453H4.00195V1.14453ZM3.42773 2.2832H4.00148V3.42695H3.42773V2.2832ZM2.8575 3.4275H3.4275V4.57125H2.8575V3.4275ZM2.28711 4.57031H2.85711V5.71406H2.28711V4.57031ZM1.71289 5.71484H2.28664V6.85484H1.71289V5.71484ZM1.14453 6.85547H1.71453V7.99922H1.14453V6.85547ZM0.570313 7.99805H1.14406V9.1418H0.570313V7.99805ZM0 9.1425H0.57V10.2863H0V9.1425Z"
+							/>
+						</symbol>
+						<symbol id="nv-dash" viewBox="0 0 286 1" preserveAspectRatio="none">
+							<path
+								d="M0 0.5H1.48958M286 0.5H284.51M4.46875 0.5H7.44792M10.4271 0.5H13.4063M16.3854 0.5H19.3646M22.3437 0.5H25.3229M28.3021 0.5H31.2812M34.2604 0.5H37.2396M40.2187 0.5H43.1979M46.1771 0.5H49.1563M52.1354 0.5H55.1146M58.0938 0.5H61.0729M64.0521 0.5H67.0313M70.0104 0.5H72.9896M75.9687 0.5H78.9479M81.9271 0.5H84.9062M87.8854 0.5H90.8646M93.8437 0.5H96.8229M99.8021 0.5H102.781M105.76 0.5H108.74M111.719 0.5H114.698M117.677 0.5H120.656M123.635 0.5H126.615M129.594 0.5H132.573M135.552 0.5H138.531M141.51 0.5H144.49M147.469 0.5H150.448M153.427 0.5H156.406M159.385 0.5H162.365M165.344 0.5H168.323M171.302 0.5H174.281M177.26 0.5H180.24M183.219 0.5H186.198M189.177 0.5H192.156M195.135 0.5H198.115M201.094 0.5H204.073M207.052 0.5H210.031M213.011 0.5H215.99M218.969 0.5H221.948M224.927 0.5H227.906M230.886 0.5H233.865M236.844 0.5H239.823M242.802 0.5H245.781M248.761 0.5H251.74M254.719 0.5H257.698M260.677 0.5H263.656M266.636 0.5H269.615M272.594 0.5H275.573M278.552 0.5H281.531"
+							/>
+						</symbol>
+					</defs>
+				</svg>
 
-<!-- demo spacer (not part of the section) -->
-<div class="demo-spacer"><p>Scroll down ↓</p></div>
+				<!-- =================================================================
+         EMBED 2 · SECTION: Problem → Result effect  (copy from here …)
+         ================================================================= -->
+				<section
+					class="section-problem-result u-spacing-block u-spacing-inline u-bg-primary u-color-primary u-position-relative u-overflow-hidden"
+					data-nv-pr
+					aria-label="Traffic's coming in. Signups aren't."
+				>
+					<!-- Desktop guide-line ruler: one SVG strip filled with a repeating
+           pattern (solid start/end line + 3 evenly spaced dashed lines per
+           959px tile), slid sideways with x. The script sizes it on refresh. -->
+					<svg class="problem-result_ruler" aria-hidden="true" focusable="false">
+						<defs>
+							<pattern id="nv-ruler-pat" patternUnits="userSpaceOnUse" width="959" height="7.95">
+								<rect class="problem-result_ruler_solid" x="0" y="0" width="1" height="7.95" />
+								<rect class="problem-result_ruler_dash" x="239.75" y="0" width="1" height="3.98" />
+								<rect class="problem-result_ruler_dash" x="479.5" y="0" width="1" height="3.98" />
+								<rect class="problem-result_ruler_dash" x="719.25" y="0" width="1" height="3.98" />
+							</pattern>
+						</defs>
+						<rect class="problem-result_ruler_fill" width="100%" height="100%" fill="url(#nv-ruler-pat)" />
+					</svg>
 
-<!-- =====================================================================
-     EMBED 1 · shared SVG library (place anywhere on the page, once)
-     ===================================================================== -->
-  <!-- Shared vector library. Not display:none (gradients/clipPaths inside a
-     display:none <svg> stop rendering in Chrome/Firefox). -->
-<svg class="nv-sprite" aria-hidden="true" focusable="false" width="0" height="0">
-  <defs>
-    <linearGradient id="nv-g-87a0" x1="24.8123" y1="21.8061" x2="26.8694" y2="14.5677" gradientUnits="userSpaceOnUse">
-<stop stop-color="#1F1F1F"/>
-<stop offset="1" stop-color="#333333"/>
-</linearGradient>
-<linearGradient id="nv-g-89a0" x1="8.56427" y1="75.0886" x2="11.4376" y2="68.9545" gradientUnits="userSpaceOnUse">
-<stop stop-color="#1F1F1F"/>
-<stop offset="1" stop-color="#333333"/>
-</linearGradient>
-<linearGradient id="nv-g-88a0" x1="13.1908" y1="26.3938" x2="12.8492" y2="34.8569" gradientUnits="userSpaceOnUse">
-<stop stop-color="#1F1F1F"/>
-<stop offset="1" stop-color="#333333"/>
-</linearGradient>
-<linearGradient id="nv-g-86a0" x1="21.6647" y1="61.6135" x2="28.7887" y2="54.7414" gradientUnits="userSpaceOnUse">
-<stop stop-color="#1F1F1F"/>
-<stop offset="1" stop-color="#333333"/>
-</linearGradient>
-<linearGradient id="nv-g-89late0" x1="17.399" y1="148.602" x2="32.7305" y2="131.917" gradientUnits="userSpaceOnUse">
-<stop stop-color="#1F1F1F"/>
-<stop offset="1" stop-color="#333333"/>
-</linearGradient>
-<linearGradient id="nv-g-89late1" x1="64.2893" y1="34.1116" x2="89.2956" y2="16.3798" gradientUnits="userSpaceOnUse">
-<stop stop-color="#1F1F1F"/>
-<stop offset="1" stop-color="#333333"/>
-</linearGradient>
-    <clipPath id="nv-clip-87"><path d="M89.1367 24.3474L89.1369 24.3461V24.3477L89.1367 24.3474L77.0627 79.8461L2.39444 50.8174L0 26.3399L10.3763 22.0829L33.2577 29.0006L43.1021 5.0549L65.7174 0L89.1367 24.3474Z"/></clipPath>
-<clipPath id="nv-clip-89"><path d="M211 313.141L0 147.641L111.903 98.5964L117.94 77.9045L146.742 69.3612L175.72 29.9338L170.826 0L325.5 91.1406L286.5 101.141L264.5 127.141L280.5 183.141H235.5L253.5 225.641L228 239.641L211 313.141Z"/></clipPath>
-<clipPath id="nv-clip-88"><path d="M17 148.5L0 222L94.8319 248.48L92.4375 223.996L102.816 219.734L125.69 226.653L135.54 202.708L158.156 197.652L166.13 205.963L198 39L114.5 0L75.5 10L53.5 36L69.5 92H24.5L42.5 134.5L17 148.5Z"/></clipPath>
-<clipPath id="nv-clip-86"><path d="M0 77.4438L41.6373 0L105.948 40.354L110.848 70.2754L81.8998 109.703L53.0839 118.264L47.043 138.942L29.4849 143.196L0 77.4438Z"/></clipPath>
-    <!-- the intact isometric browser ("Base Animated Frame" 18:64), defined once -->
-    <symbol id="nv-browser" viewBox="0 0 280 367" overflow="visible" fill="none">
-<path d="M20.0938 0.3431L279.901 150.343V354.343L20.0937 204.343Z" fill="#242424"/>
-<path d="M0 12.1244L21 0V204L0 216.1244Z" fill="#242424"/>
-<path d="M259 162.4993L280 150.3750V354.1250L259 366.2493Z" fill="#242424"/>
-<path class="nv-ln" d="M20.5268 1.09314V0.59314L20.0938 0.34314V0.84314L20.5268 1.09314ZM279.468 150.593L279.901 150.843V150.343L279.468 150.093V150.593ZM279.468 353.593V354.093L279.901 354.343V353.843L279.468 353.593ZM20.5268 204.093L20.0937 203.843V204.343L20.5268 204.593V204.093ZM20.5268 1.09314V1.59314L279.468 151.093V150.593V150.093L20.5268 0.59314V1.09314ZM279.468 150.593L279.035 150.343V353.343L279.468 353.593L279.901 353.843V150.843L279.468 150.593ZM279.468 353.593V353.093L20.5268 203.593V204.093V204.593L279.468 354.093V353.593ZM20.5268 204.093L20.9598 204.343L20.9598 1.34314L20.5268 1.09314L20.0938 0.84314L20.0937 203.843L20.5268 204.093Z" fill="#3B3B3B"/>
-<rect width="297.306" height="21.1564" transform="matrix(0.866025 0.5 -0.866025 0.5 20.322 1.00012)" fill="#3B3B3B"/>
-<path class="nv-ln" d="M0.433013 12.3744V11.8744L0 12.1244L0 12.6244L0.433013 12.3744ZM20.567 0.750033L21 0.500033V3.33786e-05L20.567 0.250033V0.750033ZM20.567 203.75V204.25L21 204V203.5L20.567 203.75ZM0.433013 215.374L0 215.624L0 216.124L0.433013 215.874L0.433013 215.374ZM0.433013 12.3744L0.433013 12.8744L20.567 1.25003V0.750033V0.250033L0.433013 11.8744V12.3744ZM20.567 0.750033L20.134 1.00003L20.134 204L20.567 203.75L21 203.5L21 0.500033L20.567 0.750033ZM20.567 203.75V203.25L0.433013 214.874V215.374L0.433013 215.874L20.567 204.25V203.75ZM0.433013 215.374L0.866025 215.124L0.866025 12.1244L0.433013 12.3744L0 12.6244L0 215.624L0.433013 215.374Z" fill="#3B3B3B"/>
-<path class="nv-ln" d="M259.433 162.499V161.999L259 162.249V162.749L259.433 162.499ZM279.567 150.875L280 150.625V150.125L279.567 150.375V150.875ZM279.567 353.875V354.375L280 354.125V353.625L279.567 353.875ZM259.433 365.499L259 365.749V366.249L259.433 365.999V365.499ZM259.433 162.499V162.999L279.567 151.375V150.875V150.375L259.433 161.999V162.499ZM279.567 150.875L279.134 151.125V354.125L279.567 353.875L280 353.625V150.625L279.567 150.875ZM279.567 353.875V353.375L259.433 364.999V365.499V365.999L279.567 354.375V353.875ZM259.433 365.499L259.866 365.249V162.249L259.433 162.499L259 162.749V365.749L259.433 365.499Z" fill="#3B3B3B"/>
-<g>
-<rect width="300" height="204" transform="matrix(0.866025 0.5 0 1 0.09375 12.3431)" fill="#242424"/>
-<path class="nv-ln" d="M0.526763 13.0931V12.5931L0.09375 12.3431L0.09375 12.8431L0.526763 13.0931ZM259.468 162.593L259.901 162.843V162.343L259.468 162.093V162.593ZM259.468 365.593V366.093L259.901 366.343V365.843L259.468 365.593ZM0.526763 216.093L0.09375 215.843L0.09375 216.343L0.526763 216.593V216.093ZM0.526763 13.0931V13.5931L259.468 163.093V162.593V162.093L0.526763 12.5931V13.0931ZM259.468 162.593L259.035 162.343V365.343L259.468 365.593L259.901 365.843V162.843L259.468 162.593ZM259.468 365.593V365.093L0.526763 215.593V216.093V216.593L259.468 366.093V365.593ZM0.526763 216.093L0.959775 216.343L0.959775 13.3431L0.526763 13.0931L0.09375 12.8431L0.09375 215.843L0.526763 216.093Z" fill="#3B3B3B"/>
-</g>
-<g>
-<rect width="196.3" height="87.2553" transform="matrix(0.866025 0.5 0 1 45 155.015)" fill="#242424"/>
-<path class="nv-ln" d="M45.433 155.765V155.265L45 155.015V155.515L45.433 155.765ZM214.568 253.415L215.001 253.665V253.165L214.568 252.915V253.415ZM214.568 339.67V340.17L215.001 340.42V339.92L214.568 339.67ZM45.433 242.02L45 241.77V242.27L45.433 242.52V242.02ZM45.433 155.765V156.265L214.568 253.915V253.415V252.915L45.433 155.265V155.765ZM214.568 253.415L214.135 253.165V339.42L214.568 339.67L215.001 339.92V253.665L214.568 253.415ZM214.568 339.67V339.17L45.433 241.52V242.02V242.52L214.568 340.17V339.67ZM45.433 242.02L45.866 242.27L45.866 156.015L45.433 155.765L45 155.515L45 241.77L45.433 242.02Z" fill="#3B3B3B"/>
-</g>
-<g>
-<rect width="99.3054" height="10" transform="matrix(0.866025 0.5 0 1 87 116.374)" fill="#242424"/>
-<path class="nv-ln" d="M87.433 117.124V116.624L87 116.374V116.874L87.433 117.124ZM172.568 166.277L173.001 166.527V166.027L172.568 165.777V166.277ZM172.568 175.277V175.777L173.001 176.027V175.527L172.568 175.277ZM87.433 126.124L87 125.874V126.374L87.433 126.624V126.124ZM87.433 117.124V117.624L172.568 166.777V166.277V165.777L87.433 116.624V117.124ZM172.568 166.277L172.135 166.027V175.027L172.568 175.277L173.001 175.527V166.527L172.568 166.277ZM172.568 175.277V174.777L87.433 125.624V126.124V126.624L172.568 175.777V175.277ZM87.433 126.124L87.866 126.374V117.374L87.433 117.124L87 116.874V125.874L87.433 126.124Z" fill="#3B3B3B"/>
-</g>
-<g>
-<rect width="159.348" height="10" transform="matrix(0.866025 0.5 0 1 61 118.113)" fill="#242424"/>
-<path class="nv-ln" d="M61.433 118.863V118.363L61 118.113V118.613L61.433 118.863ZM198.566 198.036L198.999 198.286V197.786L198.566 197.536V198.036ZM198.566 207.036V207.536L198.999 207.786V207.286L198.566 207.036ZM61.433 127.863L61 127.613V128.113L61.433 128.363V127.863ZM61.433 118.863V119.363L198.566 198.536V198.036V197.536L61.433 118.363V118.863ZM198.566 198.036L198.133 197.786V206.786L198.566 207.036L198.999 207.286V198.286L198.566 198.036ZM198.566 207.036V206.536L61.433 127.363V127.863V128.363L198.566 207.536V207.036ZM61.433 127.863L61.866 128.113V119.113L61.433 118.863L61 118.613V127.613L61.433 127.863Z" fill="#3B3B3B"/>
-</g>
-<path class="nv-ln" d="M0.526763 13.0931V12.5931L0.09375 12.3431L0.09375 12.8431L0.526763 13.0931ZM259.468 162.593L259.901 162.843V162.343L259.468 162.093V162.593ZM259.468 189.593V190.093L259.901 190.343V189.843L259.468 189.593ZM0.526763 40.0931L0.09375 39.8431L0.09375 40.3431L0.526763 40.5931V40.0931ZM0.526763 13.0931V13.5931L259.468 163.093V162.593V162.093L0.526763 12.5931V13.0931ZM259.468 162.593L259.035 162.343V189.343L259.468 189.593L259.901 189.843V162.843L259.468 162.593ZM259.468 189.593V189.093L0.526763 39.5931V40.0931V40.5931L259.468 190.093V189.593ZM0.526763 40.0931L0.959775 40.3431L0.959775 13.3431L0.526763 13.0931L0.09375 12.8431L0.09375 39.8431L0.526763 40.0931Z" fill="#3B3B3B"/>
-<path class="nv-ln" d="M12.4239 29.3431V29.8431C14.337 30.9477 15.888 33.634 15.888 35.8431L16.321 36.0931L16.754 36.3431C16.754 33.5817 14.8153 30.2239 12.4239 28.8431V29.3431ZM16.321 36.0931L15.888 35.8431C15.888 38.0523 14.337 38.9477 12.4239 37.8431V38.3431V38.8431C14.8153 40.2239 16.754 39.1046 16.754 36.3431L16.321 36.0931ZM12.4239 38.3431V37.8431C10.5107 36.7386 8.95978 34.0523 8.95978 31.8431L8.52676 31.5931L8.09375 31.3431C8.09375 34.1046 10.0324 37.4624 12.4239 38.8431V38.3431ZM8.52676 31.5931L8.95978 31.8431C8.95978 29.634 10.5107 28.7386 12.4239 29.8431V29.3431V28.8431C10.0324 27.4624 8.09375 28.5817 8.09375 31.3431L8.52676 31.5931Z" fill="#3B3B3B"/>
-<path class="nv-ln" d="M25.3301 37.1244V37.6244C27.2433 38.729 28.7942 41.4153 28.7942 43.6244L29.2272 43.8744L29.6603 44.1244C29.6603 41.363 27.7216 38.0051 25.3301 36.6244V37.1244ZM29.2272 43.8744L28.7942 43.6244C28.7942 45.8335 27.2433 46.729 25.3301 45.6244V46.1244V46.6244C27.7216 48.0051 29.6603 46.8858 29.6603 44.1244L29.2272 43.8744ZM25.3301 46.1244V45.6244C23.417 44.5198 21.866 41.8335 21.866 39.6244L21.433 39.3744L21 39.1244C21 41.8858 22.9387 45.2437 25.3301 46.6244V46.1244ZM21.433 39.3744L21.866 39.6244C21.866 37.4153 23.417 36.5198 25.3301 37.6244V37.1244V36.6244C22.9387 35.2437 21 36.363 21 39.1244L21.433 39.3744Z" fill="#3B3B3B"/>
-<path class="nv-ln" d="M38.3301 45.1244V45.6244C40.2433 46.729 41.7942 49.4153 41.7942 51.6244L42.2272 51.8744L42.6603 52.1244C42.6603 49.363 40.7216 46.0051 38.3301 44.6244V45.1244ZM42.2272 51.8744L41.7942 51.6244C41.7942 53.8335 40.2433 54.729 38.3301 53.6244V54.1244V54.6244C40.7216 56.0051 42.6603 54.8858 42.6603 52.1244L42.2272 51.8744ZM38.3301 54.1244V53.6244C36.417 52.5198 34.866 49.8335 34.866 47.6244L34.433 47.3744L34 47.1244C34 49.8858 35.9387 53.2437 38.3301 54.6244V54.1244ZM34.433 47.3744L34.866 47.6244C34.866 45.4153 36.417 44.5198 38.3301 45.6244V45.1244V44.6244C35.9387 43.2437 34 44.363 34 47.1244L34.433 47.3744Z" fill="#3B3B3B"/>
-<g>
-<path d="M68.933 69.2404L67.2286 61.8964L68.1847 62.4484L69.4734 68.4964L70.7828 63.9484L71.7181 64.4884L73.0275 70.5484L74.3266 65.9944L75.2827 66.5464L73.5783 71.9224L72.4767 71.2864L71.2505 65.7424L70.0242 69.8704L68.933 69.2404ZM77.4478 74.1564L75.7434 66.8124L76.6995 67.3644L77.9882 73.4124L79.2976 68.8644L80.2329 69.4044L81.5423 75.4644L82.8414 70.9104L83.7975 71.4624L82.0931 76.8384L80.9915 76.2024L79.7652 70.6584L78.5389 74.7864L77.4478 74.1564ZM85.9625 79.0724L84.2582 71.7284L85.2143 72.2804L86.5029 78.3284L87.8124 73.7804L88.7477 74.3204L90.0571 80.3804L91.3562 75.8264L92.3122 76.3784L90.6079 81.7544L89.5063 81.1184L88.28 75.5744L87.0537 79.7024L85.9625 79.0724ZM92.3826 82.779V81.423L93.5569 82.101V83.457L92.3826 82.779ZM131.922 105.607V104.251L133.096 104.929V106.285L131.922 105.607ZM136.538 108.416C136.025 108.12 135.578 107.726 135.197 107.234C134.823 106.746 134.532 106.194 134.324 105.578C134.117 104.954 134.013 104.306 134.013 103.634C134.013 102.962 134.117 102.438 134.324 102.062C134.532 101.686 134.823 101.47 135.197 101.414C135.578 101.354 136.025 101.472 136.538 101.768C136.961 102.012 137.335 102.316 137.66 102.68C137.993 103.04 138.263 103.444 138.471 103.892C138.679 104.34 138.814 104.818 138.876 105.326L137.962 104.87C137.899 104.41 137.74 103.994 137.484 103.622C137.227 103.242 136.912 102.944 136.538 102.728C136.032 102.436 135.637 102.42 135.353 102.68C135.069 102.932 134.927 103.426 134.927 104.162C134.927 104.898 135.069 105.56 135.353 106.148C135.637 106.728 136.032 107.164 136.538 107.456C136.912 107.672 137.227 107.734 137.484 107.642C137.74 107.55 137.899 107.282 137.962 106.838L138.876 107.438C138.814 107.874 138.679 108.208 138.471 108.44C138.263 108.664 137.993 108.776 137.66 108.776C137.335 108.78 136.961 108.66 136.538 108.416ZM142.11 111.633C141.604 111.341 141.16 110.949 140.779 110.457C140.398 109.965 140.104 109.411 139.896 108.795C139.688 108.171 139.584 107.523 139.584 106.851C139.584 106.171 139.688 105.643 139.896 105.267C140.104 104.891 140.398 104.677 140.779 104.625C141.16 104.573 141.604 104.693 142.11 104.985C142.615 105.277 143.055 105.667 143.429 106.155C143.811 106.647 144.105 107.201 144.313 107.817C144.521 108.433 144.625 109.081 144.625 109.761C144.625 110.433 144.521 110.961 144.313 111.345C144.105 111.721 143.811 111.935 143.429 111.987C143.055 112.043 142.615 111.925 142.11 111.633ZM142.11 110.673C142.615 110.965 143.007 110.983 143.284 110.727C143.568 110.467 143.71 109.969 143.71 109.233C143.71 108.497 143.568 107.839 143.284 107.259C143.007 106.675 142.615 106.237 142.11 105.945C141.604 105.653 141.209 105.637 140.925 105.897C140.641 106.149 140.499 106.643 140.499 107.379C140.499 108.115 140.641 108.777 140.925 109.365C141.209 109.945 141.604 110.381 142.11 110.673ZM145.814 113.628V107.268L146.614 107.73L146.646 109.356L146.521 109.236C146.583 108.92 146.691 108.682 146.843 108.522C147.002 108.358 147.196 108.274 147.425 108.27C147.654 108.258 147.907 108.332 148.184 108.492C148.662 108.768 149.05 109.144 149.348 109.62C149.652 110.1 149.843 110.634 149.919 111.222L149.753 111.114C149.808 110.778 149.909 110.528 150.054 110.364C150.207 110.196 150.401 110.112 150.636 110.112C150.872 110.112 151.142 110.2 151.447 110.376C151.842 110.604 152.174 110.892 152.445 111.24C152.715 111.58 152.919 111.97 153.058 112.41C153.196 112.85 153.266 113.326 153.266 113.838V117.93L152.393 117.426V113.55C152.393 112.974 152.296 112.486 152.102 112.086C151.908 111.678 151.62 111.364 151.239 111.144C150.983 110.996 150.758 110.938 150.564 110.97C150.376 111.006 150.231 111.13 150.127 111.342C150.023 111.546 149.971 111.84 149.971 112.224V116.028L149.098 115.524V111.72C149.098 111.152 149.012 110.658 148.838 110.238C148.665 109.818 148.374 109.49 147.965 109.254C147.709 109.106 147.484 109.048 147.29 109.08C147.103 109.116 146.954 109.238 146.843 109.446C146.739 109.658 146.687 109.952 146.687 110.328V114.132L145.814 113.628Z" fill="white" fill-opacity="0.4"/>
-<path d="M94.6702 85.8998V85.0118L95.3042 85.3778C95.4982 85.4898 95.6402 85.5358 95.7303 85.5158C95.8273 85.5078 95.9 85.4418 95.9485 85.3178L96.1459 84.8318L95.8446 84.6578L93.8285 77.2538L94.7846 77.8058L96.4265 84.0578L97.9958 79.6598L98.9519 80.2118L96.7175 86.0858C96.6136 86.3698 96.4577 86.5318 96.2499 86.5718C96.042 86.6118 95.7545 86.5258 95.3873 86.3138L94.6702 85.8998ZM101.89 88.4123C101.384 88.1203 100.941 87.7283 100.56 87.2363C100.179 86.7443 99.8845 86.1903 99.6767 85.5743C99.4688 84.9503 99.3649 84.3023 99.3649 83.6303C99.3649 82.9503 99.4688 82.4223 99.6767 82.0463C99.8845 81.6703 100.179 81.4563 100.56 81.4043C100.941 81.3523 101.384 81.4723 101.89 81.7643C102.396 82.0563 102.836 82.4463 103.21 82.9343C103.591 83.4263 103.886 83.9803 104.093 84.5963C104.301 85.2123 104.405 85.8603 104.405 86.5403C104.405 87.2123 104.301 87.7403 104.093 88.1243C103.886 88.5003 103.591 88.7143 103.21 88.7663C102.836 88.8223 102.396 88.7043 101.89 88.4123ZM101.89 87.4523C102.396 87.7443 102.787 87.7623 103.065 87.5063C103.349 87.2463 103.491 86.7483 103.491 86.0123C103.491 85.2763 103.349 84.6183 103.065 84.0383C102.787 83.4543 102.396 83.0163 101.89 82.7243C101.384 82.4323 100.99 82.4163 100.705 82.6763C100.421 82.9283 100.279 83.4223 100.279 84.1583C100.279 84.8943 100.421 85.5563 100.705 86.1443C100.99 86.7243 101.384 87.1603 101.89 87.4523ZM107.403 91.5951C106.856 91.2791 106.416 90.8131 106.083 90.1971C105.758 89.5771 105.595 88.8911 105.595 88.1391V84.0471L106.468 84.5511V88.3671C106.468 88.9831 106.561 89.4931 106.748 89.8971C106.942 90.2971 107.237 90.6111 107.632 90.8391C108.068 91.0911 108.411 91.1291 108.661 90.9531C108.91 90.7691 109.035 90.3931 109.035 89.8251V86.0331L109.908 86.5371V92.8971L109.076 92.4171V90.8451L109.211 91.0071C109.1 91.4631 108.889 91.7451 108.577 91.8531C108.266 91.9531 107.874 91.8671 107.403 91.5951ZM111.572 93.8583V87.4983L112.341 87.9423L112.383 89.5743L112.3 89.4903C112.369 88.9863 112.518 88.6763 112.747 88.5603C112.982 88.4403 113.294 88.4923 113.682 88.7163L114.222 89.0283V89.9883L113.692 89.6823C113.415 89.5223 113.183 89.4483 112.996 89.4603C112.816 89.4683 112.677 89.5603 112.58 89.7363C112.49 89.9083 112.445 90.1703 112.445 90.5223V94.3623L111.572 93.8583ZM117.1 97.1935C116.608 96.9095 116.189 96.5755 115.842 96.1915C115.503 95.8115 115.236 95.4055 115.042 94.9735C114.855 94.5375 114.748 94.1035 114.72 93.6715L115.634 94.1275C115.69 94.5435 115.832 94.9335 116.061 95.2975C116.289 95.6535 116.636 95.9655 117.1 96.2335C117.474 96.4495 117.772 96.5535 117.993 96.5455C118.222 96.5335 118.336 96.3715 118.336 96.0595C118.336 95.8915 118.302 95.7315 118.233 95.5795C118.163 95.4275 118.028 95.2535 117.827 95.0575C117.626 94.8535 117.328 94.5975 116.933 94.2895C116.407 93.8735 115.991 93.4975 115.686 93.1615C115.388 92.8215 115.174 92.4935 115.042 92.1775C114.917 91.8575 114.855 91.5295 114.855 91.1935C114.855 90.6255 115.035 90.2655 115.395 90.1135C115.756 89.9535 116.268 90.0655 116.933 90.4495C117.384 90.7095 117.761 91.0235 118.066 91.3915C118.378 91.7555 118.621 92.1435 118.794 92.5555C118.974 92.9635 119.092 93.3675 119.147 93.7675L118.233 93.3115C118.191 93.0635 118.115 92.8235 118.004 92.5915C117.893 92.3515 117.748 92.1315 117.567 91.9315C117.387 91.7235 117.173 91.5475 116.923 91.4035C116.528 91.1755 116.237 91.0955 116.05 91.1635C115.863 91.2315 115.77 91.4015 115.77 91.6735C115.77 91.8815 115.811 92.0775 115.894 92.2615C115.984 92.4415 116.126 92.6315 116.32 92.8315C116.514 93.0235 116.774 93.2455 117.1 93.4975C117.661 93.9335 118.097 94.3215 118.409 94.6615C118.721 95.0015 118.939 95.3235 119.064 95.6275C119.189 95.9315 119.251 96.2515 119.251 96.5875C119.251 96.9795 119.154 97.2595 118.96 97.4275C118.773 97.5915 118.517 97.6515 118.191 97.6075C117.872 97.5675 117.509 97.4295 117.1 97.1935ZM120.442 98.9794V92.6194L121.315 93.1234V99.4834L120.442 98.9794ZM120.422 91.6114V90.4354L121.336 90.9634V92.1394L120.422 91.6114ZM124.58 101.368C124.081 101.08 123.71 100.734 123.468 100.33C123.232 99.93 123.114 99.45 123.114 98.89V92.674L123.987 93.178V99.37C123.987 99.658 124.043 99.89 124.154 100.066C124.264 100.242 124.434 100.396 124.663 100.528L125.453 100.984V101.872L124.58 101.368ZM122.304 94.582V93.694L125.453 95.512V96.4L122.304 94.582ZM128.622 103.846C128.102 103.546 127.652 103.15 127.271 102.658C126.897 102.17 126.606 101.618 126.398 101.002C126.197 100.382 126.097 99.7359 126.097 99.0639C126.097 98.3919 126.197 97.8659 126.398 97.4859C126.606 97.1099 126.893 96.8919 127.261 96.8319C127.635 96.7679 128.075 96.8819 128.58 97.1739C129.058 97.4499 129.481 97.8259 129.848 98.3019C130.215 98.7699 130.5 99.3099 130.7 99.9219C130.908 100.538 131.012 101.202 131.012 101.914V102.214L127.011 99.9039C127.046 100.604 127.202 101.206 127.479 101.71C127.763 102.218 128.144 102.61 128.622 102.886C128.982 103.094 129.277 103.168 129.505 103.108C129.741 103.044 129.904 102.878 129.994 102.61L130.929 103.234C130.784 103.718 130.506 104.026 130.098 104.158C129.696 104.286 129.204 104.182 128.622 103.846ZM127.011 99.0159L130.056 100.774C130.015 100.134 129.859 99.5919 129.588 99.1479C129.325 98.7079 128.989 98.3699 128.58 98.1339C128.158 97.8899 127.808 97.8399 127.531 97.9839C127.261 98.1239 127.087 98.4679 127.011 99.0159Z" fill="white" fill-opacity="0.8"/>
-</g>
-</symbol>
-    <!-- each fragment = clipPath ("Mask Shape") + clipped <use> of the browser
-         + "Broken Parts Highlight" crack lines, in fragment-local coords
-         (origin = the fragment's Step-2 position) -->
-    <g id="nv-frag-87">
-<g clip-path="url(#nv-clip-87)"><use href="#nv-browser" x="-206.4355" y="-299.7767" width="280" height="367"/></g>
-<g fill="none" transform="translate(-0.5337 -0.5494)">
-<path d="M10.9108 22.633L17.8664 16.8423L38.7138 17.5778L33.7922 29.5506L10.9108 22.633Z" fill="url(#nv-g-87a0)"/>
-<path d="M73.5685 8.15663L66.2512 0.549316L43.6359 5.60422L33.7915 29.5499L10.9101 22.6322L0.533813 26.8892L1.46735 36.4324" stroke="#3B3B3B" class="nv-hl"/>
-<path d="M73.5692 8.15663L66.2519 0.549316L43.6365 5.60422L33.7922 29.5499L10.9108 22.6322L17.8664 16.8416L38.7138 17.577" stroke="#3B3B3B" class="nv-hl"/>
-</g>
-</g>
-<g id="nv-frag-89">
-<g clip-path="url(#nv-clip-89)"><use href="#nv-browser" x="97.002" y="-10.9798" width="280" height="367"/></g>
-<g fill="none" transform="translate(96.9746 22.4266)">
-<path d="M0.500004 82.4934L14.9283 76.1698L16.6285 70.3424L0.5 78.2693L0.500004 82.4934Z" fill="url(#nv-g-89a0)"/>
-<path d="M77.5308 0.0806885L78.745 7.50753L49.7677 46.9349L20.9655 55.4783L14.9283 76.1702L0.5 82.4937" stroke="#3B3B3B" class="nv-hl"/>
-<path d="M16.6285 70.3424L0.5 78.2693V83.0253" stroke="#3B3B3B" class="nv-hl"/>
-</g>
-</g>
-<g id="nv-frag-88">
-<g clip-path="url(#nv-clip-88)"><use href="#nv-browser" x="-113.998" y="-102.1224" width="280" height="367"/></g>
-<g fill="none" transform="translate(91.911 197.103)">
-<path d="M10.9057 22.6315L33.7797 29.5505L12.7108 25.8132L1.26265 36.3382L0.526794 26.8932L10.9057 22.6315Z" fill="url(#nv-g-88a0)"/>
-<path d="M74.2193 8.86018L66.2455 0.549438L43.6296 5.60526L33.7797 29.5505M33.7797 29.5505L10.9057 22.6315L0.526794 26.8932L1.26265 36.3382L12.7108 25.8132L33.7797 29.5505Z" stroke="#3B3B3B" class="nv-hl"/>
-</g>
-<g fill="none" transform="translate(8.136 5.248)">
-<path d="M0.487122 179.472L8.86459 143.252L34.3646 129.252L16.3646 86.752H61.3646L45.3646 30.752L67.3646 4.75199L84.0083 0.484375" stroke="#3B3B3B" class="nv-hl"/>
-<path d="M16.659 86.2324L22.6277 74.3438L59.5715 81.2956L60.7257 86.2324H16.659Z" fill-rule="evenodd" clip-rule="evenodd" fill="#242424"/>
-<path d="M0.487122 179.472L5.36407 158.752L11.3641 129.6L29.8641 118.252L16.3646 86.752L22.6847 74.3726L59.4866 81.093L45.3646 30.752L67.3646 4.75199L84.0083 0.484375" stroke="#3B3B3B" class="nv-hl"/>
-</g>
-</g>
-<g id="nv-frag-86">
-<g clip-path="url(#nv-clip-86)"><use href="#nv-browser" x="32.1387" y="29.3776" width="280" height="367"/></g>
-<g fill="none" transform="translate(32.324 63.214)">
-<path d="M20.7603 55.0494L14.7193 75.7273L28.6101 52.5671L20.7603 55.0494Z" fill="url(#nv-g-86a0)"/>
-<path d="M0.117737 79.2648L14.7197 75.7273L20.7607 55.0493L49.5765 46.4887L78.5249 7.06078L77.3818 0.0808105" stroke="#3B3B3B" class="nv-hl"/>
-<path d="M28.6101 52.5671L14.7193 75.7273" stroke="#3B3B3B" class="nv-hl"/>
-</g>
-</g>
-<g id="nv-frag-89-late">
-<g fill="none" transform="translate(219.1886 96.5646)">
-<path d="M0.487061 179.065L8.81104 143.076L34.311 129.076L16.311 86.5757H61.311L45.311 30.5757L67.311 4.57565L83.267 0.484375" stroke="#3B3B3B" class="nv-hl"/>
-<path d="M0.487061 179.065L12.0857 145.372L34.311 129.076L16.311 86.5757H61.311L56.9863 34.1625L83.267 10.9035V0.484375" stroke="#3B3B3B" class="nv-hl"/>
-<path d="M34.311 129.076L12.0857 145.373L0.487061 179.065L8.81104 143.076L34.311 129.076Z" fill-rule="evenodd" clip-rule="evenodd" fill="url(#nv-g-89late0)"/>
-<path d="M61.3113 86.5757L45.3113 30.5757L67.3113 4.57565L83.2673 0.484375V10.9035L56.9865 34.1625L61.3113 86.5757Z" fill-rule="evenodd" clip-rule="evenodd" fill="url(#nv-g-89late1)"/>
-</g>
-</g>
-    <symbol id="nv-warn" viewBox="-0.2854 -0.5715 12 12"><path d="M10.8555 9.14258H11.4292V10.2863H10.8555V9.14258ZM10.2871 7.99805H10.8571V9.1418H10.2871V7.99805ZM0.570313 10.2871H10.8566V10.8571H0.570313V10.2871ZM9.7168 6.85547H10.2868V7.99922H9.7168V6.85547ZM9.1425 5.715H9.71625V6.855H9.1425V5.715ZM8.57227 4.57031H9.14227V5.71406H8.57227V4.57031ZM7.99805 3.42773H8.5718V4.57148H7.99805V3.42773ZM7.42969 2.2832H7.99969V3.42695H7.42969V2.2832ZM6.85938 1.14453H7.42937V2.28453H6.85938V1.14453ZM6.28516 0.570312H6.85891V1.14406H6.28516V0.570312ZM5.14031 9.14297H6.28406V8.57297H6.85781V7.42922H6.28406V6.85547H5.14031V7.42922H4.57031V8.57297H5.14031V9.14297ZM5.14063 2.85742H6.28437V6.28492H5.14063V2.85742ZM5.14063 0H6.28437V0.57H5.14063V0ZM4.57031 0.570312H5.14031V1.14406H4.57031V0.570312ZM4.00195 1.14453H4.57195V2.28453H4.00195V1.14453ZM3.42773 2.2832H4.00148V3.42695H3.42773V2.2832ZM2.8575 3.4275H3.4275V4.57125H2.8575V3.4275ZM2.28711 4.57031H2.85711V5.71406H2.28711V4.57031ZM1.71289 5.71484H2.28664V6.85484H1.71289V5.71484ZM1.14453 6.85547H1.71453V7.99922H1.14453V6.85547ZM0.570313 7.99805H1.14406V9.1418H0.570313V7.99805ZM0 9.1425H0.57V10.2863H0V9.1425Z"/></symbol>
-    <symbol id="nv-dash" viewBox="0 0 286 1" preserveAspectRatio="none"><path d="M0 0.5H1.48958M286 0.5H284.51M4.46875 0.5H7.44792M10.4271 0.5H13.4063M16.3854 0.5H19.3646M22.3437 0.5H25.3229M28.3021 0.5H31.2812M34.2604 0.5H37.2396M40.2187 0.5H43.1979M46.1771 0.5H49.1563M52.1354 0.5H55.1146M58.0938 0.5H61.0729M64.0521 0.5H67.0313M70.0104 0.5H72.9896M75.9687 0.5H78.9479M81.9271 0.5H84.9062M87.8854 0.5H90.8646M93.8437 0.5H96.8229M99.8021 0.5H102.781M105.76 0.5H108.74M111.719 0.5H114.698M117.677 0.5H120.656M123.635 0.5H126.615M129.594 0.5H132.573M135.552 0.5H138.531M141.51 0.5H144.49M147.469 0.5H150.448M153.427 0.5H156.406M159.385 0.5H162.365M165.344 0.5H168.323M171.302 0.5H174.281M177.26 0.5H180.24M183.219 0.5H186.198M189.177 0.5H192.156M195.135 0.5H198.115M201.094 0.5H204.073M207.052 0.5H210.031M213.011 0.5H215.99M218.969 0.5H221.948M224.927 0.5H227.906M230.886 0.5H233.865M236.844 0.5H239.823M242.802 0.5H245.781M248.761 0.5H251.74M254.719 0.5H257.698M260.677 0.5H263.656M266.636 0.5H269.615M272.594 0.5H275.573M278.552 0.5H281.531"/></symbol>
-  </defs>
-</svg>
+					<!-- ========================== DESKTOP (1159 × 754 canvas) -->
+					<div class="problem-result_canvas cc-desktop">
+						<div class="problem-result_tabs u-display-flex">
+							<button type="button" class="problem-result_tab u-display-flex u-align-items-center u-justify-content-center u-position-relative" data-nv-tab="first">
+								<span class="problem-result_tab_bg"></span><span class="problem-result_tab_label u-text-uppercase u-position-relative">Problems</span>
+							</button>
+							<button type="button" class="problem-result_tab cc-results u-display-flex u-align-items-center u-justify-content-center u-position-relative" data-nv-tab="last">
+								<span class="problem-result_tab_bg"></span><span class="problem-result_tab_label u-text-uppercase u-position-relative">Results</span>
+							</button>
+						</div>
+						<h3 class="problem-result_title u-heading-h3 u-text-center u-text-wrap-balance">Traffic's coming in. Signups aren't.</h3>
+						<p class="problem-result_text u-text-regular u-text-center">Every visit that doesn't convert is pipeline you paid for and lost.</p>
 
-<!-- =====================================================================
-     EMBED 2 · SECTION: Problem → Result effect  (copy from here …)
-     ===================================================================== -->
-<section class="nv-pr" data-nv-pr aria-label="Traffic's coming in. Signups aren't.">
+						<svg class="problem-result_art" viewBox="0 0 1159 754" aria-hidden="true" focusable="false">
+							<use class="problem-result_intact" href="#nv-browser" x="453" y="283" width="280" height="367" />
+							<g class="problem-result_frags">
+								<g class="problem-result_frag-slot" transform="translate(659.5547 582.4434)">
+									<g class="problem-result_frag" data-frag="87"><use class="problem-result_frag_art" href="#nv-frag-87" /></g>
+								</g>
+								<g class="problem-result_frag-slot" transform="translate(355.8574 292.8594)">
+									<g class="problem-result_frag" data-frag="89">
+										<use class="problem-result_frag_art" href="#nv-frag-89" />
+										<use class="problem-result_frag_face" href="#nv-frag-89-late" />
+									</g>
+								</g>
+								<g class="problem-result_frag-slot" transform="translate(567 384)">
+									<g class="problem-result_frag" data-frag="88"><use class="problem-result_frag_art" href="#nv-frag-88" /></g>
+								</g>
+								<g class="problem-result_frag-slot" transform="translate(421 253)">
+									<g class="problem-result_frag" data-frag="86"><use class="problem-result_frag_art" href="#nv-frag-86" /></g>
+								</g>
+							</g>
+							<g class="problem-result_leaders">
+								<g class="problem-result_leader" data-leader="1">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(339.5 340)"
+										d="M80.5 48L80.5 47.5L8.5 47.5L8.5 48L8.5 48.5L80.5 48.5L80.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35787 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM80.5 50.6667C81.9728 50.6667 83.1667 49.4728 83.1667 48C83.1667 46.5272 81.9728 45.3333 80.5 45.3333C79.0272 45.3333 77.8333 46.5272 77.8333 48C77.8333 49.4728 79.0272 50.6667 80.5 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="2">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(766.333 464)"
+										d="M2.66675 48L2.66675 47.5L119.667 47.5L119.667 48L119.667 48.5L2.66675 48.5L2.66675 48ZM127.667 40L127.167 40L127.167 -3.79284e-06L127.667 -3.8147e-06L128.167 -3.83655e-06L128.167 40L127.667 40ZM119.667 48L119.667 47.5C123.809 47.5 127.167 44.1421 127.167 40L127.667 40L128.167 40C128.167 44.6944 124.361 48.5 119.667 48.5L119.667 48ZM2.66675 50.6667C1.19399 50.6667 7.63583e-05 49.4728 7.62939e-05 48C7.62296e-05 46.5272 1.19398 45.3333 2.66675 45.3333C4.1395 45.3333 5.33341 46.5272 5.33341 48C5.33341 49.4728 4.1395 50.6667 2.66675 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="3">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(375.5 483)"
+										d="M85.5 48L85.5 47.5L8.5 47.5L8.5 48L8.5 48.5L85.5 48.5L85.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35786 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM85.5 50.6667C86.9728 50.6667 88.1667 49.4728 88.1667 48C88.1667 46.5272 86.9728 45.3333 85.5 45.3333C84.0272 45.3333 82.8333 46.5272 82.8333 48C82.8333 49.4728 84.0272 50.6667 85.5 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="4">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(790.333 608)"
+										d="M2.66674 48L2.66674 47.5L78.6667 47.5L78.6667 48L78.6667 48.5L2.66674 48.5L2.66674 48ZM86.6667 40L86.1667 40L86.1667 -3.79284e-06L86.6667 -3.8147e-06L87.1667 -3.83655e-06L87.1667 40L86.6667 40ZM78.6667 48L78.6667 47.5C82.8089 47.5 86.1667 44.1421 86.1667 40L86.6667 40L87.1667 40C87.1667 44.6944 83.3612 48.5 78.6667 48.5L78.6667 48ZM2.66674 50.6667C1.19399 50.6667 7.63583e-05 49.4728 7.62939e-05 48C7.62296e-05 46.5272 1.19398 45.3333 2.66674 45.3333C4.1395 45.3333 5.33341 46.5272 5.33341 48C5.33341 49.4728 4.1395 50.6667 2.66674 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="5">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(455.5 578.333)"
+										d="M136.5 2.66662L136.5 3.16662L8.5 3.16663L8.5 2.66663L8.5 2.16663L136.5 2.16662L136.5 2.66662ZM0.5 10.6666L1 10.6666L1 45.6666L0.500002 45.6666L1.87959e-06 45.6666L3.49691e-07 10.6666L0.5 10.6666ZM8.5 2.66663L8.5 3.16663C4.35786 3.16663 1 6.52449 1 10.6666L0.5 10.6666L3.49691e-07 10.6666C1.44491e-07 5.97221 3.80558 2.16663 8.5 2.16663L8.5 2.66663ZM136.5 -4.28996e-05C137.973 -4.2964e-05 139.167 1.19386 139.167 2.66662C139.167 4.13938 137.973 5.33329 136.5 5.33329C135.027 5.33329 133.833 4.13938 133.833 2.66662C133.833 1.19386 135.027 -4.28353e-05 136.5 -4.28996e-05Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="6">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(667.333 349)"
+										d="M2.66675 48L2.66675 47.5L67.6667 47.5L67.6667 48L67.6667 48.5L2.66675 48.5L2.66675 48ZM75.6667 40L75.1667 40L75.1667 -3.79284e-06L75.6667 -3.8147e-06L76.1667 -3.83655e-06L76.1667 40L75.6667 40ZM67.6667 48L67.6667 47.5C71.8089 47.5 75.1667 44.1421 75.1667 40L75.6667 40L76.1667 40C76.1667 44.6944 72.3612 48.5 67.6667 48.5L67.6667 48ZM2.66675 50.6667C1.19399 50.6667 7.63583e-05 49.4728 7.62939e-05 48C7.62296e-05 46.5272 1.19398 45.3333 2.66675 45.3333C4.1395 45.3333 5.33341 46.5272 5.33341 48C5.33341 49.4728 4.1395 50.6667 2.66675 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="low">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(276.5 325)"
+										d="M80.5 48L80.5 47.5L8.5 47.5L8.5 48L8.5 48.5L80.5 48.5L80.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35787 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM80.5 50.6667C81.9728 50.6667 83.1667 49.4728 83.1667 48C83.1667 46.5272 81.9728 45.3333 80.5 45.3333C79.0272 45.3333 77.8333 46.5272 77.8333 48C77.8333 49.4728 79.0272 50.6667 80.5 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="comp">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(499.5 539)"
+										d="M92.5 48L92.5 47.5L8.5 47.5L8.5 48L8.5 48.5L92.5 48.5L92.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35786 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM92.5 50.6667C93.9728 50.6667 95.1667 49.4728 95.1667 48C95.1667 46.5272 93.9728 45.3333 92.5 45.3333C91.0272 45.3333 89.8333 46.5272 89.8333 48C89.8333 49.4728 91.0272 50.6667 92.5 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="thou">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(637.333 373)"
+										d="M2.66675 48L2.66675 47.5L111.667 47.5L111.667 48L111.667 48.5L2.66675 48.5L2.66675 48ZM119.667 40L119.167 40L119.167 -3.79284e-06L119.667 -3.8147e-06L120.167 -3.83655e-06L120.167 40L119.667 40ZM111.667 48L111.667 47.5C115.809 47.5 119.167 44.1421 119.167 40L119.667 40L120.167 40C120.167 44.6944 116.361 48.5 111.667 48.5L111.667 48ZM2.66675 50.6667C1.19399 50.6667 8.39877e-05 49.4728 8.39233e-05 48C8.3859e-05 46.5272 1.19399 45.3333 2.66675 45.3333C4.13951 45.3333 5.33342 46.5272 5.33342 48C5.33342 49.4728 4.13951 50.6667 2.66675 50.6667Z"
+									/>
+								</g>
+								<g class="problem-result_leader" data-leader="burn">
+									<path
+										class="problem-result_leader_path"
+										transform="translate(794.333 634)"
+										d="M2.6665 48L2.6665 47.5L86.6665 47.5L86.6665 48L86.6665 48.5L2.6665 48.5L2.6665 48ZM94.6665 40L94.1665 40L94.1665 -3.79284e-06L94.6665 -3.8147e-06L95.1665 -3.83655e-06L95.1665 40L94.6665 40ZM86.6665 48L86.6665 47.5C90.8086 47.5 94.1665 44.1421 94.1665 40L94.6665 40L95.1665 40C95.1665 44.6944 91.3609 48.5 86.6665 48.5L86.6665 48ZM2.6665 50.6667C1.19375 50.6667 -0.000160153 49.4728 -0.000160217 48C-0.000160282 46.5272 1.19375 45.3333 2.6665 45.3333C4.13927 45.3333 5.33317 46.5272 5.33317 48C5.33317 49.4728 4.13927 50.6667 2.6665 50.6667Z"
+									/>
+								</g>
+							</g>
+						</svg>
 
+						<div class="problem-result_dots" aria-hidden="true">
+							<span class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center" data-dot="1" style="left: 419px; top: 388px">1</span>
+							<span class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center" data-dot="2" style="left: 772px; top: 512px">2</span>
+							<span class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center" data-dot="3" style="left: 461px; top: 531px">3</span>
+							<span class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center" data-dot="4" style="left: 793px; top: 656px">4</span>
+							<span class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center" data-dot="5" style="left: 594px; top: 581px">5</span>
+							<span class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center" data-dot="6" style="left: 670px; top: 397px">6</span>
+							<span class="problem-result_dot cc-small u-display-flex u-align-items-center u-justify-content-center" data-dot="low" style="left: 357px; top: 373px"></span>
+							<span class="problem-result_dot cc-small u-display-flex u-align-items-center u-justify-content-center" data-dot="comp" style="left: 592px; top: 587px"></span>
+							<span class="problem-result_dot cc-small u-display-flex u-align-items-center u-justify-content-center" data-dot="thou" style="left: 641px; top: 421px"></span>
+							<span class="problem-result_dot cc-small u-display-flex u-align-items-center u-justify-content-center" data-dot="burn" style="left: 797px; top: 682px"></span>
+						</div>
 
-  <!-- Desktop guide-line "ruler": one SVG strip filled with a repeating
-       pattern (solid start/end line + 3 evenly spaced dashed lines per
-       959px tile), slid sideways with x. main.js sizes it on refresh. -->
-  <svg class="nv-ruler" aria-hidden="true" focusable="false">
-    <defs>
-      <pattern id="nv-ruler-pat" patternUnits="userSpaceOnUse" width="959" height="7.95">
-        <rect class="nv-ruler__solid" x="0" y="0" width="1" height="7.95"/>
-        <rect class="nv-ruler__dash" x="239.75" y="0" width="1" height="3.98"/>
-        <rect class="nv-ruler__dash" x="479.5" y="0" width="1" height="3.98"/>
-        <rect class="nv-ruler__dash" x="719.25" y="0" width="1" height="3.98"/>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#nv-ruler-pat)"/>
-  </svg>
+						<ul class="problem-result_chips u-list-unstyled" role="list">
+							<li class="problem-result_chip u-display-flex u-align-items-center u-justify-content-center" data-chip="1" style="left: 100px; top: 320px; width: 293px">
+								<svg class="problem-result_chip_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text">The Design Undersells the Product.</span>
+							</li>
+							<li class="problem-result_chip u-display-flex u-align-items-center u-justify-content-center" data-chip="2" style="left: 816px; top: 444px; width: 217px">
+								<svg class="problem-result_chip_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text">It blends into the noise</span>
+							</li>
+							<li class="problem-result_chip cc-fixed" data-chip="3" style="left: 179px; top: 439px; width: 240px; height: 48px">
+								<svg class="problem-result_chip_icon" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text" style="top: 5px; width: 208px">It informs, but it doesn't make them want it</span>
+							</li>
+							<li class="problem-result_chip cc-fixed" data-chip="4" style="left: 838px; top: 588px; width: 221px; height: 48px">
+								<svg class="problem-result_chip_icon" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text" style="top: 5px; width: 185px">Cheap-Looking Design Caps What you can Charge.</span>
+							</li>
+							<li class="problem-result_chip cc-fixed" data-chip="5" style="left: 160px; top: 624px; width: 366px; height: 25px">
+								<svg class="problem-result_chip_icon cc-middle" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text cc-nowrap" style="top: 3px">It doesn't Look like a Product They can Trust.</span>
+							</li>
+							<li class="problem-result_chip cc-fixed" data-chip="6" style="left: 701px; top: 329px; width: 235px; height: 48px">
+								<svg class="problem-result_chip_icon" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text" style="top: 6px; width: 199px">You Lead with Features, Not the Reason to Care.</span>
+							</li>
+							<!-- Step 6 ("what it costs you") -->
+							<li class="problem-result_chip u-display-flex u-align-items-center u-justify-content-center" data-chip="low" style="left: 150px; top: 305px; width: 148px">
+								<svg class="problem-result_chip_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg><span class="problem-result_chip_text">Low Conversion!</span>
+							</li>
+							<li class="problem-result_chip u-display-flex u-align-items-center u-justify-content-center" data-chip="comp" style="left: 307px; top: 519px; width: 240px">
+								<svg class="problem-result_chip_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text">Competitors Looks Standout!</span>
+							</li>
+							<li class="problem-result_chip u-display-flex u-align-items-center u-justify-content-center" data-chip="thou" style="left: 714px; top: 353px; width: 324px">
+								<svg class="problem-result_chip_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                <span class="problem-result_chip_text">Thousands visitors, but zero Sign ups!</span>
+							</li>
+							<li class="problem-result_chip u-display-flex u-align-items-center u-justify-content-center" data-chip="burn" style="left: 833px; top: 614px; width: 163px">
+								<svg class="problem-result_chip_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg><span class="problem-result_chip_text">Burn Money on Ads</span>
+							</li>
+						</ul>
+					</div>
 
-  <!-- ============================ DESKTOP (1159 × 754 canvas) -->
-  <div class="nv-canvas nv-canvas--d">
-    <div class="nv-tabs">
-      <button type="button" class="nv-tab nv-tab--p" data-nv-tab="first" aria-label="Problems: go to the first step"><i class="nv-tab__on"></i><span>Problems</span></button>
-      <button type="button" class="nv-tab nv-tab--r" data-nv-tab="last" aria-label="Results: go to the last step"><i class="nv-tab__on"></i><span>Results</span></button>
-    </div>
-    <h3 class="nv-h3">Traffic's coming in. Signups aren't.</h3>
-    <p class="nv-body">Every visit that doesn't convert is pipeline you paid for and lost.</p>
+					<!-- ========================== MOBILE (382 × 801 canvas) -->
+					<div class="problem-result_canvas cc-mobile">
+						<div class="problem-result_tabs u-display-flex">
+							<button type="button" class="problem-result_tab u-display-flex u-align-items-center u-justify-content-center u-position-relative" data-nv-tab="first">
+								<span class="problem-result_tab_bg"></span><span class="problem-result_tab_label u-text-uppercase u-position-relative">Problems</span>
+							</button>
+							<button type="button" class="problem-result_tab cc-results u-display-flex u-align-items-center u-justify-content-center u-position-relative" data-nv-tab="last">
+								<span class="problem-result_tab_bg"></span><span class="problem-result_tab_label u-text-uppercase u-position-relative">Results</span>
+							</button>
+						</div>
+						<h3 class="problem-result_title u-heading-h3 u-text-center u-text-wrap-balance">
+							Traffic's coming in.<br />
+							Signups aren't.
+						</h3>
+						<p class="problem-result_text u-text-regular u-text-center u-text-wrap-pretty u-color-secondary">Every visit that doesn't convert is pipeline you paid for and lost.</p>
 
-    <svg class="nv-art" viewBox="0 0 1159 754" aria-hidden="true" focusable="false">
-      <use class="nv-intact" href="#nv-browser" x="453" y="283" width="280" height="367"/>
-      <g class="nv-frags">
-        <g transform="translate(659.5547 582.4434)"><g class="nv-frag" data-frag="87"><use href="#nv-frag-87"/></g></g>
-<g transform="translate(355.8574 292.8594)"><g class="nv-frag" data-frag="89"><use href="#nv-frag-89"/><use class="nv-late" href="#nv-frag-89-late"/></g></g>
-<g transform="translate(567 384)"><g class="nv-frag" data-frag="88"><use href="#nv-frag-88"/></g></g>
-<g transform="translate(421 253)"><g class="nv-frag" data-frag="86"><use href="#nv-frag-86"/></g></g>
-      </g>
-      <g class="nv-leaders">
-        <g class="nv-leader" data-leader="1"><path transform="translate(339.5 340)" d="M80.5 48L80.5 47.5L8.5 47.5L8.5 48L8.5 48.5L80.5 48.5L80.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35787 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM80.5 50.6667C81.9728 50.6667 83.1667 49.4728 83.1667 48C83.1667 46.5272 81.9728 45.3333 80.5 45.3333C79.0272 45.3333 77.8333 46.5272 77.8333 48C77.8333 49.4728 79.0272 50.6667 80.5 50.6667Z"/></g>
-<g class="nv-leader" data-leader="2"><path transform="translate(766.333 464)" d="M2.66675 48L2.66675 47.5L119.667 47.5L119.667 48L119.667 48.5L2.66675 48.5L2.66675 48ZM127.667 40L127.167 40L127.167 -3.79284e-06L127.667 -3.8147e-06L128.167 -3.83655e-06L128.167 40L127.667 40ZM119.667 48L119.667 47.5C123.809 47.5 127.167 44.1421 127.167 40L127.667 40L128.167 40C128.167 44.6944 124.361 48.5 119.667 48.5L119.667 48ZM2.66675 50.6667C1.19399 50.6667 7.63583e-05 49.4728 7.62939e-05 48C7.62296e-05 46.5272 1.19398 45.3333 2.66675 45.3333C4.1395 45.3333 5.33341 46.5272 5.33341 48C5.33341 49.4728 4.1395 50.6667 2.66675 50.6667Z"/></g>
-<g class="nv-leader" data-leader="3"><path transform="translate(375.5 483)" d="M85.5 48L85.5 47.5L8.5 47.5L8.5 48L8.5 48.5L85.5 48.5L85.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35786 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM85.5 50.6667C86.9728 50.6667 88.1667 49.4728 88.1667 48C88.1667 46.5272 86.9728 45.3333 85.5 45.3333C84.0272 45.3333 82.8333 46.5272 82.8333 48C82.8333 49.4728 84.0272 50.6667 85.5 50.6667Z"/></g>
-<g class="nv-leader" data-leader="4"><path transform="translate(790.333 608)" d="M2.66674 48L2.66674 47.5L78.6667 47.5L78.6667 48L78.6667 48.5L2.66674 48.5L2.66674 48ZM86.6667 40L86.1667 40L86.1667 -3.79284e-06L86.6667 -3.8147e-06L87.1667 -3.83655e-06L87.1667 40L86.6667 40ZM78.6667 48L78.6667 47.5C82.8089 47.5 86.1667 44.1421 86.1667 40L86.6667 40L87.1667 40C87.1667 44.6944 83.3612 48.5 78.6667 48.5L78.6667 48ZM2.66674 50.6667C1.19399 50.6667 7.63583e-05 49.4728 7.62939e-05 48C7.62296e-05 46.5272 1.19398 45.3333 2.66674 45.3333C4.1395 45.3333 5.33341 46.5272 5.33341 48C5.33341 49.4728 4.1395 50.6667 2.66674 50.6667Z"/></g>
-<g class="nv-leader" data-leader="5"><path transform="translate(455.5 578.333)" d="M136.5 2.66662L136.5 3.16662L8.5 3.16663L8.5 2.66663L8.5 2.16663L136.5 2.16662L136.5 2.66662ZM0.5 10.6666L1 10.6666L1 45.6666L0.500002 45.6666L1.87959e-06 45.6666L3.49691e-07 10.6666L0.5 10.6666ZM8.5 2.66663L8.5 3.16663C4.35786 3.16663 1 6.52449 1 10.6666L0.5 10.6666L3.49691e-07 10.6666C1.44491e-07 5.97221 3.80558 2.16663 8.5 2.16663L8.5 2.66663ZM136.5 -4.28996e-05C137.973 -4.2964e-05 139.167 1.19386 139.167 2.66662C139.167 4.13938 137.973 5.33329 136.5 5.33329C135.027 5.33329 133.833 4.13938 133.833 2.66662C133.833 1.19386 135.027 -4.28353e-05 136.5 -4.28996e-05Z"/></g>
-<g class="nv-leader" data-leader="6"><path transform="translate(667.333 349)" d="M2.66675 48L2.66675 47.5L67.6667 47.5L67.6667 48L67.6667 48.5L2.66675 48.5L2.66675 48ZM75.6667 40L75.1667 40L75.1667 -3.79284e-06L75.6667 -3.8147e-06L76.1667 -3.83655e-06L76.1667 40L75.6667 40ZM67.6667 48L67.6667 47.5C71.8089 47.5 75.1667 44.1421 75.1667 40L75.6667 40L76.1667 40C76.1667 44.6944 72.3612 48.5 67.6667 48.5L67.6667 48ZM2.66675 50.6667C1.19399 50.6667 7.63583e-05 49.4728 7.62939e-05 48C7.62296e-05 46.5272 1.19398 45.3333 2.66675 45.3333C4.1395 45.3333 5.33341 46.5272 5.33341 48C5.33341 49.4728 4.1395 50.6667 2.66675 50.6667Z"/></g>
-        <g class="nv-leader" data-leader="low"><path transform="translate(276.5 325)" d="M80.5 48L80.5 47.5L8.5 47.5L8.5 48L8.5 48.5L80.5 48.5L80.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35787 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM80.5 50.6667C81.9728 50.6667 83.1667 49.4728 83.1667 48C83.1667 46.5272 81.9728 45.3333 80.5 45.3333C79.0272 45.3333 77.8333 46.5272 77.8333 48C77.8333 49.4728 79.0272 50.6667 80.5 50.6667Z"/></g>
-<g class="nv-leader" data-leader="comp"><path transform="translate(499.5 539)" d="M92.5 48L92.5 47.5L8.5 47.5L8.5 48L8.5 48.5L92.5 48.5L92.5 48ZM0.5 40L1 40L1 -3.79284e-06L0.500002 -3.8147e-06L2.09815e-06 -3.83655e-06L3.49691e-07 40L0.5 40ZM8.5 48L8.5 47.5C4.35786 47.5 1 44.1421 1 40L0.5 40L3.49691e-07 40C1.44491e-07 44.6944 3.80558 48.5 8.5 48.5L8.5 48ZM92.5 50.6667C93.9728 50.6667 95.1667 49.4728 95.1667 48C95.1667 46.5272 93.9728 45.3333 92.5 45.3333C91.0272 45.3333 89.8333 46.5272 89.8333 48C89.8333 49.4728 91.0272 50.6667 92.5 50.6667Z"/></g>
-<g class="nv-leader" data-leader="thou"><path transform="translate(637.333 373)" d="M2.66675 48L2.66675 47.5L111.667 47.5L111.667 48L111.667 48.5L2.66675 48.5L2.66675 48ZM119.667 40L119.167 40L119.167 -3.79284e-06L119.667 -3.8147e-06L120.167 -3.83655e-06L120.167 40L119.667 40ZM111.667 48L111.667 47.5C115.809 47.5 119.167 44.1421 119.167 40L119.667 40L120.167 40C120.167 44.6944 116.361 48.5 111.667 48.5L111.667 48ZM2.66675 50.6667C1.19399 50.6667 8.39877e-05 49.4728 8.39233e-05 48C8.3859e-05 46.5272 1.19399 45.3333 2.66675 45.3333C4.13951 45.3333 5.33342 46.5272 5.33342 48C5.33342 49.4728 4.13951 50.6667 2.66675 50.6667Z"/></g>
-<g class="nv-leader" data-leader="burn"><path transform="translate(794.333 634)" d="M2.6665 48L2.6665 47.5L86.6665 47.5L86.6665 48L86.6665 48.5L2.6665 48.5L2.6665 48ZM94.6665 40L94.1665 40L94.1665 -3.79284e-06L94.6665 -3.8147e-06L95.1665 -3.83655e-06L95.1665 40L94.6665 40ZM86.6665 48L86.6665 47.5C90.8086 47.5 94.1665 44.1421 94.1665 40L94.6665 40L95.1665 40C95.1665 44.6944 91.3609 48.5 86.6665 48.5L86.6665 48ZM2.6665 50.6667C1.19375 50.6667 -0.000160153 49.4728 -0.000160217 48C-0.000160282 46.5272 1.19375 45.3333 2.6665 45.3333C4.13927 45.3333 5.33317 46.5272 5.33317 48C5.33317 49.4728 4.13927 50.6667 2.6665 50.6667Z"/></g>
-      </g>
-    </svg>
+						<!-- 4-segment progress (gray track + one orange overlay per segment) -->
+						<svg class="problem-result_progress" viewBox="0 0 213 3" aria-hidden="true">
+							<g class="problem-result_progress_base">
+								<path class="problem-result_progress_track" d="M1.5 1.5H49.5" />
+								<path class="problem-result_progress_track" d="M55.5 1.5H103.5" />
+								<path class="problem-result_progress_track" d="M109.5 1.5H157.5" />
+								<path class="problem-result_progress_track" d="M163.5 1.5H211.5" />
+							</g>
+							<path class="problem-result_progress_active" data-seg="1" d="M1.5 1.5H49.5" />
+							<path class="problem-result_progress_active" data-seg="2" d="M55.5 1.5H103.5" />
+							<path class="problem-result_progress_active" data-seg="3" d="M109.5 1.5H157.5" />
+							<path class="problem-result_progress_active" data-seg="4" d="M163.5 1.5H211.5" />
+						</svg>
 
-    <div class="nv-dots" aria-hidden="true">
-      <span class="nv-dot" data-dot="1" style="left:419px;top:388px">1</span>
-<span class="nv-dot" data-dot="2" style="left:772px;top:512px">2</span>
-<span class="nv-dot" data-dot="3" style="left:461px;top:531px">3</span>
-<span class="nv-dot" data-dot="4" style="left:793px;top:656px">4</span>
-<span class="nv-dot" data-dot="5" style="left:594px;top:581px">5</span>
-<span class="nv-dot" data-dot="6" style="left:670px;top:397px">6</span>
-      <span class="nv-dot nv-dot--sm" data-dot="low" style="left:357px;top:373px"></span>
-<span class="nv-dot nv-dot--sm" data-dot="comp" style="left:592px;top:587px"></span>
-<span class="nv-dot nv-dot--sm" data-dot="thou" style="left:641px;top:421px"></span>
-<span class="nv-dot nv-dot--sm" data-dot="burn" style="left:797px;top:682px"></span>
-    </div>
+						<div class="problem-result_frame" aria-hidden="true"></div>
 
-    <ul class="nv-chips" role="list">
-      <li class="nv-chip" data-chip="1" style="left:100px;top:320px;width:293px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>The Design Undersells the Product.</span></li>
-      <li class="nv-chip" data-chip="2" style="left:816px;top:444px;width:217px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>It blends into the noise</span></li>
-      <li class="nv-chip nv-chip--fixed" data-chip="3" style="left:179px;top:439px;width:240px;height:48px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span style="top:5px;width:208px">It informs, but it doesn't make them want it</span></li>
-      <li class="nv-chip nv-chip--fixed" data-chip="4" style="left:838px;top:588px;width:221px;height:48px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span style="top:5px;width:185px">Cheap-Looking Design Caps What you can Charge.</span></li>
-      <li class="nv-chip nv-chip--fixed" data-chip="5" style="left:160px;top:624px;width:366px;height:25px"><svg class="nv-ico nv-ico--mid" aria-hidden="true"><use href="#nv-warn"/></svg><span style="top:3px;white-space:nowrap">It doesn't Look like a Product They can Trust.</span></li>
-      <li class="nv-chip nv-chip--fixed" data-chip="6" style="left:701px;top:329px;width:235px;height:48px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span style="top:6px;width:199px">You Lead with Features, Not the Reason to Care.</span></li>
-      <!-- Step 6 ("what it costs you") -->
-      <li class="nv-chip" data-chip="low" style="left:150px;top:305px;width:148px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Low Conversion!</span></li>
-      <li class="nv-chip" data-chip="comp" style="left:307px;top:519px;width:240px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Competitors Looks Standout!</span></li>
-      <li class="nv-chip" data-chip="thou" style="left:714px;top:353px;width:324px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Thousands visitors, but zero Sign ups!</span></li>
-      <li class="nv-chip" data-chip="burn" style="left:833px;top:614px;width:163px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Burn Money on Ads</span></li>
-    </ul>
-  </div>
+						<!-- Step 4 result panel (sits under the artwork) -->
+						<div class="problem-result_panel" aria-hidden="true">
+							<div class="problem-result_panel_box"></div>
+							<svg class="problem-result_panel_grid" viewBox="0 0 300.5 266" aria-hidden="true">
+								<path
+									class="problem-result_panel_grid-line"
+									d="M75.25 1.09278e-08L75.25 0.992537M75.25 266L75.25 265.008M75.25 2.97761L75.25 4.96269M75.25 6.94776L75.25 8.93284M75.25 10.9179L75.25 12.903M75.25 14.8881L75.25 16.8731M75.25 18.8582L75.25 20.8433M75.25 22.8284L75.25 24.8134M75.25 26.7985L75.25 28.7836M75.25 30.7687L75.25 32.7537M75.25 34.7388L75.25 36.7239M75.25 38.709L75.25 40.694M75.25 42.6791L75.25 44.6642M75.25 46.6492L75.25 48.6343M75.25 50.6194L75.25 52.6045M75.25 54.5895L75.25 56.5746M75.25 58.5597L75.25 60.5448M75.25 62.5298L75.25 64.5149M75.25 66.5L75.25 68.4851M75.25 70.4701L75.25 72.4552M75.25 74.4403L75.25 76.4254M75.25 78.4104L75.25 80.3955M75.25 82.3806L75.25 84.3657M75.25 86.3508L75.25 88.3358M75.25 90.3209L75.25 92.306M75.25 94.2911L75.25 96.2761M75.25 98.2612L75.25 100.246M75.25 102.231L75.25 104.216M75.25 106.202L75.25 108.187M75.25 110.172L75.25 112.157M75.25 114.142L75.25 116.127M75.25 118.112L75.25 120.097M75.25 122.082L75.25 124.067M75.25 126.052L75.25 128.037M75.25 130.022L75.25 132.008M75.25 133.993L75.25 135.978M75.25 137.963L75.25 139.948M75.25 141.933L75.25 143.918M75.25 145.903L75.25 147.888M75.25 149.873L75.25 151.858M75.25 153.843L75.25 155.828M75.25 157.814L75.25 159.799M75.25 161.784L75.25 163.769M75.25 165.754L75.25 167.739M75.25 169.724L75.25 171.709M75.25 173.694L75.25 175.679M75.25 177.664L75.25 179.649M75.25 181.634L75.25 183.62M75.25 185.605L75.25 187.59M75.25 189.575L75.25 191.56M75.25 193.545L75.25 195.53M75.25 197.515L75.25 199.5M75.25 201.485L75.25 203.47M75.25 205.455L75.25 207.44M75.25 209.426L75.25 211.411M75.25 213.396L75.25 215.381M75.25 217.366L75.25 219.351M75.25 221.336L75.25 223.321M75.25 225.306L75.25 227.291M75.25 229.276L75.25 231.261M75.25 233.246L75.25 235.232M75.25 237.217L75.25 239.202M75.25 241.187L75.25 243.172M75.25 245.157L75.25 247.142M75.25 249.127L75.25 251.112M75.25 253.097L75.25 255.082M75.25 257.067L75.25 259.052M75.25 261.038L75.25 263.023"
+								/>
+								<path
+									class="problem-result_panel_grid-line"
+									d="M300.25 1.09278e-08L300.25 0.992537M300.25 266L300.25 265.008M300.25 2.97761L300.25 4.96269M300.25 6.94776L300.25 8.93284M300.25 10.9179L300.25 12.903M300.25 14.8881L300.25 16.8731M300.25 18.8582L300.25 20.8433M300.25 22.8284L300.25 24.8134M300.25 26.7985L300.25 28.7836M300.25 30.7687L300.25 32.7537M300.25 34.7388L300.25 36.7239M300.25 38.709L300.25 40.694M300.25 42.6791L300.25 44.6642M300.25 46.6492L300.25 48.6343M300.25 50.6194L300.25 52.6045M300.25 54.5895L300.25 56.5746M300.25 58.5597L300.25 60.5448M300.25 62.5298L300.25 64.5149M300.25 66.5L300.25 68.4851M300.25 70.4701L300.25 72.4552M300.25 74.4403L300.25 76.4254M300.25 78.4104L300.25 80.3955M300.25 82.3806L300.25 84.3657M300.25 86.3508L300.25 88.3358M300.25 90.3209L300.25 92.306M300.25 94.2911L300.25 96.2761M300.25 98.2612L300.25 100.246M300.25 102.231L300.25 104.216M300.25 106.202L300.25 108.187M300.25 110.172L300.25 112.157M300.25 114.142L300.25 116.127M300.25 118.112L300.25 120.097M300.25 122.082L300.25 124.067M300.25 126.052L300.25 128.037M300.25 130.022L300.25 132.008M300.25 133.993L300.25 135.978M300.25 137.963L300.25 139.948M300.25 141.933L300.25 143.918M300.25 145.903L300.25 147.888M300.25 149.873L300.25 151.858M300.25 153.843L300.25 155.828M300.25 157.814L300.25 159.799M300.25 161.784L300.25 163.769M300.25 165.754L300.25 167.739M300.25 169.724L300.25 171.709M300.25 173.694L300.25 175.679M300.25 177.664L300.25 179.649M300.25 181.634L300.25 183.62M300.25 185.605L300.25 187.59M300.25 189.575L300.25 191.56M300.25 193.545L300.25 195.53M300.25 197.515L300.25 199.5M300.25 201.485L300.25 203.47M300.25 205.455L300.25 207.44M300.25 209.426L300.25 211.411M300.25 213.396L300.25 215.381M300.25 217.366L300.25 219.351M300.25 221.336L300.25 223.321M300.25 225.306L300.25 227.291M300.25 229.276L300.25 231.261M300.25 233.246L300.25 235.232M300.25 237.217L300.25 239.202M300.25 241.187L300.25 243.172M300.25 245.157L300.25 247.142M300.25 249.127L300.25 251.112M300.25 253.097L300.25 255.082M300.25 257.067L300.25 259.052M300.25 261.038L300.25 263.023"
+								/>
+								<path
+									class="problem-result_panel_grid-line"
+									d="M150.25 1.09278e-08L150.25 0.992537M150.25 266L150.25 265.008M150.25 2.97761L150.25 4.96269M150.25 6.94776L150.25 8.93284M150.25 10.9179L150.25 12.903M150.25 14.8881L150.25 16.8731M150.25 18.8582L150.25 20.8433M150.25 22.8284L150.25 24.8134M150.25 26.7985L150.25 28.7836M150.25 30.7687L150.25 32.7537M150.25 34.7388L150.25 36.7239M150.25 38.709L150.25 40.694M150.25 42.6791L150.25 44.6642M150.25 46.6492L150.25 48.6343M150.25 50.6194L150.25 52.6045M150.25 54.5895L150.25 56.5746M150.25 58.5597L150.25 60.5448M150.25 62.5298L150.25 64.5149M150.25 66.5L150.25 68.4851M150.25 70.4701L150.25 72.4552M150.25 74.4403L150.25 76.4254M150.25 78.4104L150.25 80.3955M150.25 82.3806L150.25 84.3657M150.25 86.3508L150.25 88.3358M150.25 90.3209L150.25 92.306M150.25 94.2911L150.25 96.2761M150.25 98.2612L150.25 100.246M150.25 102.231L150.25 104.216M150.25 106.202L150.25 108.187M150.25 110.172L150.25 112.157M150.25 114.142L150.25 116.127M150.25 118.112L150.25 120.097M150.25 122.082L150.25 124.067M150.25 126.052L150.25 128.037M150.25 130.022L150.25 132.008M150.25 133.993L150.25 135.978M150.25 137.963L150.25 139.948M150.25 141.933L150.25 143.918M150.25 145.903L150.25 147.888M150.25 149.873L150.25 151.858M150.25 153.843L150.25 155.828M150.25 157.814L150.25 159.799M150.25 161.784L150.25 163.769M150.25 165.754L150.25 167.739M150.25 169.724L150.25 171.709M150.25 173.694L150.25 175.679M150.25 177.664L150.25 179.649M150.25 181.634L150.25 183.62M150.25 185.605L150.25 187.59M150.25 189.575L150.25 191.56M150.25 193.545L150.25 195.53M150.25 197.515L150.25 199.5M150.25 201.485L150.25 203.47M150.25 205.455L150.25 207.44M150.25 209.426L150.25 211.411M150.25 213.396L150.25 215.381M150.25 217.366L150.25 219.351M150.25 221.336L150.25 223.321M150.25 225.306L150.25 227.291M150.25 229.276L150.25 231.261M150.25 233.246L150.25 235.232M150.25 237.217L150.25 239.202M150.25 241.187L150.25 243.172M150.25 245.157L150.25 247.142M150.25 249.127L150.25 251.112M150.25 253.097L150.25 255.082M150.25 257.067L150.25 259.052M150.25 261.038L150.25 263.023"
+								/>
+								<path
+									class="problem-result_panel_grid-line"
+									d="M225.25 1.09278e-08L225.25 0.992537M225.25 266L225.25 265.008M225.25 2.97761L225.25 4.96269M225.25 6.94776L225.25 8.93284M225.25 10.9179L225.25 12.903M225.25 14.8881L225.25 16.8731M225.25 18.8582L225.25 20.8433M225.25 22.8284L225.25 24.8134M225.25 26.7985L225.25 28.7836M225.25 30.7687L225.25 32.7537M225.25 34.7388L225.25 36.7239M225.25 38.709L225.25 40.694M225.25 42.6791L225.25 44.6642M225.25 46.6492L225.25 48.6343M225.25 50.6194L225.25 52.6045M225.25 54.5895L225.25 56.5746M225.25 58.5597L225.25 60.5448M225.25 62.5298L225.25 64.5149M225.25 66.5L225.25 68.4851M225.25 70.4701L225.25 72.4552M225.25 74.4403L225.25 76.4254M225.25 78.4104L225.25 80.3955M225.25 82.3806L225.25 84.3657M225.25 86.3508L225.25 88.3358M225.25 90.3209L225.25 92.306M225.25 94.2911L225.25 96.2761M225.25 98.2612L225.25 100.246M225.25 102.231L225.25 104.216M225.25 106.202L225.25 108.187M225.25 110.172L225.25 112.157M225.25 114.142L225.25 116.127M225.25 118.112L225.25 120.097M225.25 122.082L225.25 124.067M225.25 126.052L225.25 128.037M225.25 130.022L225.25 132.008M225.25 133.993L225.25 135.978M225.25 137.963L225.25 139.948M225.25 141.933L225.25 143.918M225.25 145.903L225.25 147.888M225.25 149.873L225.25 151.858M225.25 153.843L225.25 155.828M225.25 157.814L225.25 159.799M225.25 161.784L225.25 163.769M225.25 165.754L225.25 167.739M225.25 169.724L225.25 171.709M225.25 173.694L225.25 175.679M225.25 177.664L225.25 179.649M225.25 181.634L225.25 183.62M225.25 185.605L225.25 187.59M225.25 189.575L225.25 191.56M225.25 193.545L225.25 195.53M225.25 197.515L225.25 199.5M225.25 201.485L225.25 203.47M225.25 205.455L225.25 207.44M225.25 209.426L225.25 211.411M225.25 213.396L225.25 215.381M225.25 217.366L225.25 219.351M225.25 221.336L225.25 223.321M225.25 225.306L225.25 227.291M225.25 229.276L225.25 231.261M225.25 233.246L225.25 235.232M225.25 237.217L225.25 239.202M225.25 241.187L225.25 243.172M225.25 245.157L225.25 247.142M225.25 249.127L225.25 251.112M225.25 253.097L225.25 255.082M225.25 257.067L225.25 259.052M225.25 261.038L225.25 263.023"
+								/>
+								<path
+									class="problem-result_panel_grid-line"
+									d="M0.250012 1.09278e-08L0.250012 0.992537M0.25 266L0.25 265.008M0.250011 2.97761L0.250011 4.96269M0.250011 6.94776L0.250011 8.93284M0.250011 10.9179L0.250011 12.903M0.250011 14.8881L0.250011 16.8731M0.250011 18.8582L0.250011 20.8433M0.250011 22.8284L0.250011 24.8134M0.25001 26.7985L0.25001 28.7836M0.25001 30.7687L0.25001 32.7537M0.25001 34.7388L0.25001 36.7239M0.25001 38.709L0.25001 40.694M0.25001 42.6791L0.25001 44.6642M0.25001 46.6492L0.25001 48.6343M0.250009 50.6194L0.250009 52.6045M0.250009 54.5895L0.250009 56.5746M0.250009 58.5597L0.250009 60.5448M0.250009 62.5298L0.250009 64.5149M0.250009 66.5L0.250009 68.4851M0.250009 70.4701L0.250008 72.4552M0.250008 74.4403L0.250008 76.4254M0.250008 78.4104L0.250008 80.3955M0.250008 82.3806L0.250008 84.3657M0.250008 86.3508L0.250008 88.3358M0.250008 90.3209L0.250008 92.306M0.250008 94.2911L0.250007 96.2761M0.250007 98.2612L0.250007 100.246M0.250007 102.231L0.250007 104.216M0.250007 106.202L0.250007 108.187M0.250007 110.172L0.250007 112.157M0.250007 114.142L0.250007 116.127M0.250006 118.112L0.250006 120.097M0.250006 122.082L0.250006 124.067M0.250006 126.052L0.250006 128.037M0.250006 130.022L0.250006 132.008M0.250006 133.993L0.250006 135.978M0.250006 137.963L0.250006 139.948M0.250005 141.933L0.250005 143.918M0.250005 145.903L0.250005 147.888M0.250005 149.873L0.250005 151.858M0.250005 153.843L0.250005 155.828M0.250005 157.814L0.250005 159.799M0.250005 161.784L0.250004 163.769M0.250004 165.754L0.250004 167.739M0.250004 169.724L0.250004 171.709M0.250004 173.694L0.250004 175.679M0.250004 177.664L0.250004 179.649M0.250004 181.634L0.250004 183.62M0.250004 185.605L0.250003 187.59M0.250003 189.575L0.250003 191.56M0.250003 193.545L0.250003 195.53M0.250003 197.515L0.250003 199.5M0.250003 201.485L0.250003 203.47M0.250003 205.455L0.250003 207.44M0.250002 209.426L0.250002 211.411M0.250002 213.396L0.250002 215.381M0.250002 217.366L0.250002 219.351M0.250002 221.336L0.250002 223.321M0.250002 225.306L0.250002 227.291M0.250002 229.276L0.250002 231.261M0.250001 233.246L0.250001 235.232M0.250001 237.217L0.250001 239.202M0.250001 241.187L0.250001 243.172M0.250001 245.157L0.250001 247.142M0.250001 249.127L0.250001 251.112M0.250001 253.097L0.25 255.082M0.25 257.067L0.25 259.052M0.25 261.038L0.25 263.023"
+								/>
+							</svg>
+						</div>
 
-  <!-- ============================ MOBILE (382 × 801 canvas) -->
-  <div class="nv-canvas nv-canvas--m">
-    <div class="nv-tabs">
-      <button type="button" class="nv-tab nv-tab--p" data-nv-tab="first" aria-label="Problems: go to the first step"><i class="nv-tab__on"></i><span>Problems</span></button>
-      <button type="button" class="nv-tab nv-tab--r" data-nv-tab="last" aria-label="Results: go to the last step"><i class="nv-tab__on"></i><span>Results</span></button>
-    </div>
-    <h3 class="nv-h3">Traffic's coming in.<br> Signups aren't.</h3>
-    <p class="nv-body">Every visit that doesn't convert is pipeline you paid for and lost.</p>
+						<svg class="problem-result_art cc-mobile" viewBox="0 0 382 801" aria-hidden="true" focusable="false">
+							<g class="problem-result_frags">
+								<g class="problem-result_frag-slot" transform="translate(252.5781 479.1118)">
+									<g class="problem-result_frag" data-frag="87">
+										<g class="problem-result_frag_scale" transform="scale(0.648891)"><use class="problem-result_frag_art" href="#nv-frag-87" /></g>
+									</g>
+								</g>
+								<g class="problem-result_frag-slot" transform="translate(39 277.8645)">
+									<g class="problem-result_frag" data-frag="89">
+										<g class="problem-result_frag_scale" transform="scale(0.648891)">
+											<use class="problem-result_frag_art" href="#nv-frag-89" />
+											<use class="problem-result_frag_face" href="#nv-frag-89-late" />
+										</g>
+									</g>
+								</g>
+								<g class="problem-result_frag-slot" transform="translate(192.5215 350.3438)">
+									<g class="problem-result_frag" data-frag="88">
+										<g class="problem-result_frag_scale" transform="scale(0.648891)"><use class="problem-result_frag_art" href="#nv-frag-88" /></g>
+									</g>
+								</g>
+								<g class="problem-result_frag-slot" transform="translate(81.2714 252.0001)">
+									<g class="problem-result_frag" data-frag="86">
+										<g class="problem-result_frag_scale" transform="scale(0.648891)"><use class="problem-result_frag_art" href="#nv-frag-86" /></g>
+									</g>
+								</g>
+							</g>
+						</svg>
 
-    <!-- 4-segment progress (gray base + one orange overlay per segment) -->
-    <svg class="nv-progress" viewBox="0 0 213 3" aria-hidden="true">
-      <g class="nv-progress__base"><path d="M1.5 1.5H49.5"/><path d="M55.5 1.5H103.5"/><path d="M109.5 1.5H157.5"/><path d="M163.5 1.5H211.5"/></g>
-      <path class="nv-progress__on" data-seg="1" d="M1.5 1.5H49.5"/>
-      <path class="nv-progress__on" data-seg="2" d="M55.5 1.5H103.5"/>
-      <path class="nv-progress__on" data-seg="3" d="M109.5 1.5H157.5"/>
-      <path class="nv-progress__on" data-seg="4" d="M163.5 1.5H211.5"/>
-    </svg>
+						<div class="problem-result_dots" aria-hidden="true">
+							<span
+								class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center"
+								data-mdot="1"
+								data-frag="86"
+								data-lx="14.989"
+								data-ly="82.176"
+								style="left: 96.2608px; top: 334.1756px"
+								>1</span
+							>
+							<span
+								class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center"
+								data-mdot="2"
+								data-frag="88"
+								data-lx="116.512"
+								data-ly="69.719"
+								style="left: 309.033px; top: 420.0625px"
+								>2</span
+							>
+							<span
+								class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center"
+								data-mdot="3"
+								data-frag="89"
+								data-lx="68.226"
+								data-ly="154.527"
+								style="left: 107.226px; top: 432.3917px"
+								>3</span
+							>
+							<span
+								class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center"
+								data-mdot="4"
+								data-frag="87"
+								data-lx="51.259"
+								data-ly="23.292"
+								style="left: 303.8368px; top: 502.4042px"
+								>4</span
+							>
+							<span
+								class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center"
+								data-mdot="5"
+								data-frag="88"
+								data-lx="1.009"
+								data-ly="114.492"
+								style="left: 193.5305px; top: 464.836px"
+								>5</span
+							>
+							<span
+								class="problem-result_dot u-display-flex u-align-items-center u-justify-content-center"
+								data-mdot="6"
+								data-frag="89"
+								data-lx="203.844"
+								data-ly="67.576"
+								style="left: 242.8442px; top: 345.4404px"
+								>6</span
+							>
+						</div>
 
-    <div class="nv-m-frame" aria-hidden="true"></div>
+						<ul class="problem-result_list u-list-unstyled" data-mlist="1" role="list">
+							<li class="problem-result_list_item" style="top: 0">
+								<svg class="problem-result_list_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+								<p class="problem-result_list_text">The Design Undersells the Product.</p>
+							</li>
+							<li class="problem-result_list_rule" style="top: 39px" aria-hidden="true">
+								<svg class="problem-result_list_rule-line"><use href="#nv-dash" /></svg>
+							</li>
+							<li class="problem-result_list_item" style="top: 55px">
+								<svg class="problem-result_list_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+								<p class="problem-result_list_text">It blends into the noise</p>
+							</li>
+						</ul>
+						<ul class="problem-result_list u-list-unstyled" data-mlist="2" role="list">
+							<li class="problem-result_list_item" style="top: 0">
+								<svg class="problem-result_list_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+								<p class="problem-result_list_text">It informs, but it doesn't make them want it</p>
+							</li>
+							<li class="problem-result_list_rule" style="top: 50px" aria-hidden="true">
+								<svg class="problem-result_list_rule-line"><use href="#nv-dash" /></svg>
+							</li>
+							<li class="problem-result_list_item" style="top: 62px">
+								<svg class="problem-result_list_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+								<p class="problem-result_list_text">Cheap-Looking Design Caps What you can Charge.</p>
+							</li>
+						</ul>
+						<ul class="problem-result_list u-list-unstyled" data-mlist="3" role="list">
+							<li class="problem-result_list_item" style="top: 0">
+								<svg class="problem-result_list_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+								<p class="problem-result_list_text">It doesn't Look like a Product They can Trust.</p>
+							</li>
+							<li class="problem-result_list_rule" style="top: 50px" aria-hidden="true">
+								<svg class="problem-result_list_rule-line"><use href="#nv-dash" /></svg>
+							</li>
+							<li class="problem-result_list_item" style="top: 62px">
+								<svg class="problem-result_list_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+								<p class="problem-result_list_text">You Lead with Features, Not the Reason to Care.</p>
+							</li>
+						</ul>
+						<div class="problem-result_costs" data-mlist="4">
+							<h4 class="problem-result_costs_title u-heading-h4">What it costs you.</h4>
+							<svg class="problem-result_costs_rule" aria-hidden="true"><use href="#nv-dash" /></svg>
+							<ul class="problem-result_costs_list u-list-unstyled" role="list">
+								<li class="problem-result_costs_item u-display-flex u-align-items-center u-justify-content-between">
+									<svg class="problem-result_costs_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                  <span class="problem-result_costs_text u-weight-500">Low Conversion!</span>
+								</li>
+								<li class="problem-result_costs_sep" aria-hidden="true">
+									<svg class="problem-result_costs_sep-line"><use href="#nv-dash" /></svg>
+								</li>
+								<li class="problem-result_costs_item u-display-flex u-align-items-center u-justify-content-between">
+									<svg class="problem-result_costs_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                  <span class="problem-result_costs_text u-weight-500">Competitors Looks Standout!</span>
+								</li>
+								<li class="problem-result_costs_sep" aria-hidden="true">
+									<svg class="problem-result_costs_sep-line"><use href="#nv-dash" /></svg>
+								</li>
+								<li class="problem-result_costs_item u-display-flex u-align-items-center u-justify-content-between">
+									<svg class="problem-result_costs_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                  <span class="problem-result_costs_text u-weight-500">Thousands visitors, but zero Sign ups!</span>
+								</li>
+								<li class="problem-result_costs_sep" aria-hidden="true">
+									<svg class="problem-result_costs_sep-line"><use href="#nv-dash" /></svg>
+								</li>
+								<li class="problem-result_costs_item u-display-flex u-align-items-center u-justify-content-between">
+									<svg class="problem-result_costs_icon u-flex-shrink-0" aria-hidden="true"><use href="#nv-warn" /></svg>
+                  <span class="problem-result_costs_text u-weight-500">Burn Money on Ads</span>
+								</li>
+							</ul>
+						</div>
 
-    <!-- Step 4 result panel (sits under the artwork) -->
-    <div class="nv-m-panel">
-      <div class="nv-m-panel__box"></div>
-      <svg class="nv-m-panel__grid" viewBox="0 0 300.5 266" aria-hidden="true"><path d="M75.25 1.09278e-08L75.25 0.992537M75.25 266L75.25 265.008M75.25 2.97761L75.25 4.96269M75.25 6.94776L75.25 8.93284M75.25 10.9179L75.25 12.903M75.25 14.8881L75.25 16.8731M75.25 18.8582L75.25 20.8433M75.25 22.8284L75.25 24.8134M75.25 26.7985L75.25 28.7836M75.25 30.7687L75.25 32.7537M75.25 34.7388L75.25 36.7239M75.25 38.709L75.25 40.694M75.25 42.6791L75.25 44.6642M75.25 46.6492L75.25 48.6343M75.25 50.6194L75.25 52.6045M75.25 54.5895L75.25 56.5746M75.25 58.5597L75.25 60.5448M75.25 62.5298L75.25 64.5149M75.25 66.5L75.25 68.4851M75.25 70.4701L75.25 72.4552M75.25 74.4403L75.25 76.4254M75.25 78.4104L75.25 80.3955M75.25 82.3806L75.25 84.3657M75.25 86.3508L75.25 88.3358M75.25 90.3209L75.25 92.306M75.25 94.2911L75.25 96.2761M75.25 98.2612L75.25 100.246M75.25 102.231L75.25 104.216M75.25 106.202L75.25 108.187M75.25 110.172L75.25 112.157M75.25 114.142L75.25 116.127M75.25 118.112L75.25 120.097M75.25 122.082L75.25 124.067M75.25 126.052L75.25 128.037M75.25 130.022L75.25 132.008M75.25 133.993L75.25 135.978M75.25 137.963L75.25 139.948M75.25 141.933L75.25 143.918M75.25 145.903L75.25 147.888M75.25 149.873L75.25 151.858M75.25 153.843L75.25 155.828M75.25 157.814L75.25 159.799M75.25 161.784L75.25 163.769M75.25 165.754L75.25 167.739M75.25 169.724L75.25 171.709M75.25 173.694L75.25 175.679M75.25 177.664L75.25 179.649M75.25 181.634L75.25 183.62M75.25 185.605L75.25 187.59M75.25 189.575L75.25 191.56M75.25 193.545L75.25 195.53M75.25 197.515L75.25 199.5M75.25 201.485L75.25 203.47M75.25 205.455L75.25 207.44M75.25 209.426L75.25 211.411M75.25 213.396L75.25 215.381M75.25 217.366L75.25 219.351M75.25 221.336L75.25 223.321M75.25 225.306L75.25 227.291M75.25 229.276L75.25 231.261M75.25 233.246L75.25 235.232M75.25 237.217L75.25 239.202M75.25 241.187L75.25 243.172M75.25 245.157L75.25 247.142M75.25 249.127L75.25 251.112M75.25 253.097L75.25 255.082M75.25 257.067L75.25 259.052M75.25 261.038L75.25 263.023"/>
-<path d="M300.25 1.09278e-08L300.25 0.992537M300.25 266L300.25 265.008M300.25 2.97761L300.25 4.96269M300.25 6.94776L300.25 8.93284M300.25 10.9179L300.25 12.903M300.25 14.8881L300.25 16.8731M300.25 18.8582L300.25 20.8433M300.25 22.8284L300.25 24.8134M300.25 26.7985L300.25 28.7836M300.25 30.7687L300.25 32.7537M300.25 34.7388L300.25 36.7239M300.25 38.709L300.25 40.694M300.25 42.6791L300.25 44.6642M300.25 46.6492L300.25 48.6343M300.25 50.6194L300.25 52.6045M300.25 54.5895L300.25 56.5746M300.25 58.5597L300.25 60.5448M300.25 62.5298L300.25 64.5149M300.25 66.5L300.25 68.4851M300.25 70.4701L300.25 72.4552M300.25 74.4403L300.25 76.4254M300.25 78.4104L300.25 80.3955M300.25 82.3806L300.25 84.3657M300.25 86.3508L300.25 88.3358M300.25 90.3209L300.25 92.306M300.25 94.2911L300.25 96.2761M300.25 98.2612L300.25 100.246M300.25 102.231L300.25 104.216M300.25 106.202L300.25 108.187M300.25 110.172L300.25 112.157M300.25 114.142L300.25 116.127M300.25 118.112L300.25 120.097M300.25 122.082L300.25 124.067M300.25 126.052L300.25 128.037M300.25 130.022L300.25 132.008M300.25 133.993L300.25 135.978M300.25 137.963L300.25 139.948M300.25 141.933L300.25 143.918M300.25 145.903L300.25 147.888M300.25 149.873L300.25 151.858M300.25 153.843L300.25 155.828M300.25 157.814L300.25 159.799M300.25 161.784L300.25 163.769M300.25 165.754L300.25 167.739M300.25 169.724L300.25 171.709M300.25 173.694L300.25 175.679M300.25 177.664L300.25 179.649M300.25 181.634L300.25 183.62M300.25 185.605L300.25 187.59M300.25 189.575L300.25 191.56M300.25 193.545L300.25 195.53M300.25 197.515L300.25 199.5M300.25 201.485L300.25 203.47M300.25 205.455L300.25 207.44M300.25 209.426L300.25 211.411M300.25 213.396L300.25 215.381M300.25 217.366L300.25 219.351M300.25 221.336L300.25 223.321M300.25 225.306L300.25 227.291M300.25 229.276L300.25 231.261M300.25 233.246L300.25 235.232M300.25 237.217L300.25 239.202M300.25 241.187L300.25 243.172M300.25 245.157L300.25 247.142M300.25 249.127L300.25 251.112M300.25 253.097L300.25 255.082M300.25 257.067L300.25 259.052M300.25 261.038L300.25 263.023"/>
-<path d="M150.25 1.09278e-08L150.25 0.992537M150.25 266L150.25 265.008M150.25 2.97761L150.25 4.96269M150.25 6.94776L150.25 8.93284M150.25 10.9179L150.25 12.903M150.25 14.8881L150.25 16.8731M150.25 18.8582L150.25 20.8433M150.25 22.8284L150.25 24.8134M150.25 26.7985L150.25 28.7836M150.25 30.7687L150.25 32.7537M150.25 34.7388L150.25 36.7239M150.25 38.709L150.25 40.694M150.25 42.6791L150.25 44.6642M150.25 46.6492L150.25 48.6343M150.25 50.6194L150.25 52.6045M150.25 54.5895L150.25 56.5746M150.25 58.5597L150.25 60.5448M150.25 62.5298L150.25 64.5149M150.25 66.5L150.25 68.4851M150.25 70.4701L150.25 72.4552M150.25 74.4403L150.25 76.4254M150.25 78.4104L150.25 80.3955M150.25 82.3806L150.25 84.3657M150.25 86.3508L150.25 88.3358M150.25 90.3209L150.25 92.306M150.25 94.2911L150.25 96.2761M150.25 98.2612L150.25 100.246M150.25 102.231L150.25 104.216M150.25 106.202L150.25 108.187M150.25 110.172L150.25 112.157M150.25 114.142L150.25 116.127M150.25 118.112L150.25 120.097M150.25 122.082L150.25 124.067M150.25 126.052L150.25 128.037M150.25 130.022L150.25 132.008M150.25 133.993L150.25 135.978M150.25 137.963L150.25 139.948M150.25 141.933L150.25 143.918M150.25 145.903L150.25 147.888M150.25 149.873L150.25 151.858M150.25 153.843L150.25 155.828M150.25 157.814L150.25 159.799M150.25 161.784L150.25 163.769M150.25 165.754L150.25 167.739M150.25 169.724L150.25 171.709M150.25 173.694L150.25 175.679M150.25 177.664L150.25 179.649M150.25 181.634L150.25 183.62M150.25 185.605L150.25 187.59M150.25 189.575L150.25 191.56M150.25 193.545L150.25 195.53M150.25 197.515L150.25 199.5M150.25 201.485L150.25 203.47M150.25 205.455L150.25 207.44M150.25 209.426L150.25 211.411M150.25 213.396L150.25 215.381M150.25 217.366L150.25 219.351M150.25 221.336L150.25 223.321M150.25 225.306L150.25 227.291M150.25 229.276L150.25 231.261M150.25 233.246L150.25 235.232M150.25 237.217L150.25 239.202M150.25 241.187L150.25 243.172M150.25 245.157L150.25 247.142M150.25 249.127L150.25 251.112M150.25 253.097L150.25 255.082M150.25 257.067L150.25 259.052M150.25 261.038L150.25 263.023"/>
-<path d="M225.25 1.09278e-08L225.25 0.992537M225.25 266L225.25 265.008M225.25 2.97761L225.25 4.96269M225.25 6.94776L225.25 8.93284M225.25 10.9179L225.25 12.903M225.25 14.8881L225.25 16.8731M225.25 18.8582L225.25 20.8433M225.25 22.8284L225.25 24.8134M225.25 26.7985L225.25 28.7836M225.25 30.7687L225.25 32.7537M225.25 34.7388L225.25 36.7239M225.25 38.709L225.25 40.694M225.25 42.6791L225.25 44.6642M225.25 46.6492L225.25 48.6343M225.25 50.6194L225.25 52.6045M225.25 54.5895L225.25 56.5746M225.25 58.5597L225.25 60.5448M225.25 62.5298L225.25 64.5149M225.25 66.5L225.25 68.4851M225.25 70.4701L225.25 72.4552M225.25 74.4403L225.25 76.4254M225.25 78.4104L225.25 80.3955M225.25 82.3806L225.25 84.3657M225.25 86.3508L225.25 88.3358M225.25 90.3209L225.25 92.306M225.25 94.2911L225.25 96.2761M225.25 98.2612L225.25 100.246M225.25 102.231L225.25 104.216M225.25 106.202L225.25 108.187M225.25 110.172L225.25 112.157M225.25 114.142L225.25 116.127M225.25 118.112L225.25 120.097M225.25 122.082L225.25 124.067M225.25 126.052L225.25 128.037M225.25 130.022L225.25 132.008M225.25 133.993L225.25 135.978M225.25 137.963L225.25 139.948M225.25 141.933L225.25 143.918M225.25 145.903L225.25 147.888M225.25 149.873L225.25 151.858M225.25 153.843L225.25 155.828M225.25 157.814L225.25 159.799M225.25 161.784L225.25 163.769M225.25 165.754L225.25 167.739M225.25 169.724L225.25 171.709M225.25 173.694L225.25 175.679M225.25 177.664L225.25 179.649M225.25 181.634L225.25 183.62M225.25 185.605L225.25 187.59M225.25 189.575L225.25 191.56M225.25 193.545L225.25 195.53M225.25 197.515L225.25 199.5M225.25 201.485L225.25 203.47M225.25 205.455L225.25 207.44M225.25 209.426L225.25 211.411M225.25 213.396L225.25 215.381M225.25 217.366L225.25 219.351M225.25 221.336L225.25 223.321M225.25 225.306L225.25 227.291M225.25 229.276L225.25 231.261M225.25 233.246L225.25 235.232M225.25 237.217L225.25 239.202M225.25 241.187L225.25 243.172M225.25 245.157L225.25 247.142M225.25 249.127L225.25 251.112M225.25 253.097L225.25 255.082M225.25 257.067L225.25 259.052M225.25 261.038L225.25 263.023"/>
-<path d="M0.250012 1.09278e-08L0.250012 0.992537M0.25 266L0.25 265.008M0.250011 2.97761L0.250011 4.96269M0.250011 6.94776L0.250011 8.93284M0.250011 10.9179L0.250011 12.903M0.250011 14.8881L0.250011 16.8731M0.250011 18.8582L0.250011 20.8433M0.250011 22.8284L0.250011 24.8134M0.25001 26.7985L0.25001 28.7836M0.25001 30.7687L0.25001 32.7537M0.25001 34.7388L0.25001 36.7239M0.25001 38.709L0.25001 40.694M0.25001 42.6791L0.25001 44.6642M0.25001 46.6492L0.25001 48.6343M0.250009 50.6194L0.250009 52.6045M0.250009 54.5895L0.250009 56.5746M0.250009 58.5597L0.250009 60.5448M0.250009 62.5298L0.250009 64.5149M0.250009 66.5L0.250009 68.4851M0.250009 70.4701L0.250008 72.4552M0.250008 74.4403L0.250008 76.4254M0.250008 78.4104L0.250008 80.3955M0.250008 82.3806L0.250008 84.3657M0.250008 86.3508L0.250008 88.3358M0.250008 90.3209L0.250008 92.306M0.250008 94.2911L0.250007 96.2761M0.250007 98.2612L0.250007 100.246M0.250007 102.231L0.250007 104.216M0.250007 106.202L0.250007 108.187M0.250007 110.172L0.250007 112.157M0.250007 114.142L0.250007 116.127M0.250006 118.112L0.250006 120.097M0.250006 122.082L0.250006 124.067M0.250006 126.052L0.250006 128.037M0.250006 130.022L0.250006 132.008M0.250006 133.993L0.250006 135.978M0.250006 137.963L0.250006 139.948M0.250005 141.933L0.250005 143.918M0.250005 145.903L0.250005 147.888M0.250005 149.873L0.250005 151.858M0.250005 153.843L0.250005 155.828M0.250005 157.814L0.250005 159.799M0.250005 161.784L0.250004 163.769M0.250004 165.754L0.250004 167.739M0.250004 169.724L0.250004 171.709M0.250004 173.694L0.250004 175.679M0.250004 177.664L0.250004 179.649M0.250004 181.634L0.250004 183.62M0.250004 185.605L0.250003 187.59M0.250003 189.575L0.250003 191.56M0.250003 193.545L0.250003 195.53M0.250003 197.515L0.250003 199.5M0.250003 201.485L0.250003 203.47M0.250003 205.455L0.250003 207.44M0.250002 209.426L0.250002 211.411M0.250002 213.396L0.250002 215.381M0.250002 217.366L0.250002 219.351M0.250002 221.336L0.250002 223.321M0.250002 225.306L0.250002 227.291M0.250002 229.276L0.250002 231.261M0.250001 233.246L0.250001 235.232M0.250001 237.217L0.250001 239.202M0.250001 241.187L0.250001 243.172M0.250001 245.157L0.250001 247.142M0.250001 249.127L0.250001 251.112M0.250001 253.097L0.25 255.082M0.25 257.067L0.25 259.052M0.25 261.038L0.25 263.023"/></svg>
-    </div>
+						<button type="button" class="problem-result_back" data-nv-prev>
+							<span class="problem-result_back_label u-sr-only">Previous problem</span>
+							<svg class="problem-result_back_icon" viewBox="0 0 40 40" aria-hidden="true">
+								<g transform="matrix(-1 0 0 1 40 0)"><path d="M14 20H25M20.078 25L25 20L20.078 15" /></g>
+							</svg>
+						</button>
+						<button type="button" class="problem-result_next" data-nv-next>
+							<span class="problem-result_next_label" data-t="next">Next Problem</span>
+							<span class="problem-result_next_label cc-result" data-t="show">Show the Result</span>
+							<svg class="problem-result_next_icon" viewBox="0 0 12.7744 11.6" aria-hidden="true"><path d="M0.8 5.8H11.9744M6.97443 10.8L11.9744 5.8L6.97443 0.8" /></svg>
+						</button>
+						<button type="button" class="problem-result_goback" data-nv-goback>Go back</button>
+					</div>
+				</section>
+				<!-- ================================================= (… to here) -->
 
-    <svg class="nv-m-art" viewBox="0 0 382 801" aria-hidden="true" focusable="false">
-      <g class="nv-frags">
-        <g transform="translate(252.5781 479.1118)"><g class="nv-frag" data-frag="87"><g transform="scale(0.648891)"><use href="#nv-frag-87"/></g></g></g>
-<g transform="translate(39 277.8645)"><g class="nv-frag" data-frag="89"><g transform="scale(0.648891)"><use href="#nv-frag-89"/><use class="nv-late" href="#nv-frag-89-late"/></g></g></g>
-<g transform="translate(192.5215 350.3438)"><g class="nv-frag" data-frag="88"><g transform="scale(0.648891)"><use href="#nv-frag-88"/></g></g></g>
-<g transform="translate(81.2714 252.0001)"><g class="nv-frag" data-frag="86"><g transform="scale(0.648891)"><use href="#nv-frag-86"/></g></g></g>
-      </g>
-    </svg>
+				<!-- demo section (not part of the build) -->
+				<section class="section-demo cc-after u-spacing-block u-spacing-inline">
+					<p class="demo_text u-text-regular u-text-center">The page continues here.</p>
+				</section>
+			</main>
+		</div>
 
-    <div class="nv-dots" aria-hidden="true">
-      <span class="nv-dot" data-mdot="1" data-frag="86" data-lx="14.989" data-ly="82.176" style="left:96.2608px;top:334.1756px">1</span>
-<span class="nv-dot" data-mdot="2" data-frag="88" data-lx="116.512" data-ly="69.719" style="left:309.033px;top:420.0625px">2</span>
-<span class="nv-dot" data-mdot="3" data-frag="89" data-lx="68.226" data-ly="154.527" style="left:107.226px;top:432.3917px">3</span>
-<span class="nv-dot" data-mdot="4" data-frag="87" data-lx="51.259" data-ly="23.292" style="left:303.8368px;top:502.4042px">4</span>
-<span class="nv-dot" data-mdot="5" data-frag="88" data-lx="1.009" data-ly="114.492" style="left:193.5305px;top:464.836px">5</span>
-<span class="nv-dot" data-mdot="6" data-frag="89" data-lx="203.844" data-ly="67.576" style="left:242.8442px;top:345.4404px">6</span>
-    </div>
-
-    <ul class="nv-m-list" data-mlist="1" role="list">
-      <li class="nv-m-item" style="top:0"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><p>The Design Undersells the Product.</p></li>
-      <li class="nv-m-rule" style="top:39px" aria-hidden="true"><svg><use href="#nv-dash"/></svg></li>
-      <li class="nv-m-item" style="top:55px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><p>It blends into the noise</p></li>
-    </ul>
-    <ul class="nv-m-list" data-mlist="2" role="list">
-      <li class="nv-m-item" style="top:0"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><p>It informs, but it doesn't make them want it</p></li>
-      <li class="nv-m-rule" style="top:50px" aria-hidden="true"><svg><use href="#nv-dash"/></svg></li>
-      <li class="nv-m-item" style="top:62px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><p>Cheap-Looking Design Caps What you can Charge.</p></li>
-    </ul>
-    <ul class="nv-m-list" data-mlist="3" role="list">
-      <li class="nv-m-item" style="top:0"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><p>It doesn't Look like a Product They can Trust.</p></li>
-      <li class="nv-m-rule" style="top:50px" aria-hidden="true"><svg><use href="#nv-dash"/></svg></li>
-      <li class="nv-m-item" style="top:62px"><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><p>You Lead with Features, Not the Reason to Care.</p></li>
-    </ul>
-    <div class="nv-m-costs" data-mlist="4">
-      <h4 class="nv-m-costs__title">What it costs you.</h4>
-      <svg class="nv-m-costs__rule" aria-hidden="true"><use href="#nv-dash"/></svg>
-      <ul class="nv-m-costs__list" role="list">
-        <li><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Low Conversion!</span></li>
-        <li class="nv-m-costs__sep" aria-hidden="true"><svg><use href="#nv-dash"/></svg></li>
-        <li><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Competitors Looks Standout!</span></li>
-        <li class="nv-m-costs__sep" aria-hidden="true"><svg><use href="#nv-dash"/></svg></li>
-        <li><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Thousands visitors, but zero Sign ups!</span></li>
-        <li class="nv-m-costs__sep" aria-hidden="true"><svg><use href="#nv-dash"/></svg></li>
-        <li><svg class="nv-ico" aria-hidden="true"><use href="#nv-warn"/></svg><span>Burn Money on Ads</span></li>
-      </ul>
-    </div>
-
-    <button type="button" class="nv-m-back" data-nv-prev aria-label="Previous problem">
-      <svg viewBox="0 0 40 40" aria-hidden="true"><g transform="matrix(-1 0 0 1 40 0)"><path d="M14 20H25M20.078 25L25 20L20.078 15"/></g></svg>
-    </button>
-    <button type="button" class="nv-m-next" data-nv-next>
-      <span class="nv-m-next__t" data-t="next">Next Problem</span>
-      <span class="nv-m-next__t" data-t="show">Show the Result</span>
-      <svg class="nv-m-next__arrow" viewBox="0 0 12.7744 11.6" aria-hidden="true"><path d="M0.8 5.8H11.9744M6.97443 10.8L11.9744 5.8L6.97443 0.8"/></svg>
-    </button>
-    <button type="button" class="nv-m-goback" data-nv-goback>Go back</button>
-  </div>
-</section>
-<!-- ===================================================== (… to here) -->
-
-<!-- demo spacer (not part of the section) -->
-<div class="demo-spacer demo-spacer--after"><p>The page continues here.</p></div>
-
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script>
-/* =========================================================================
+		<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+		<script>
+			/* =========================================================================
    New Vertical · "Section Problem Result Effect"
    One pinned + scrubbed GSAP timeline per breakpoint, created inside
    gsap.matchMedia() so everything reverts cleanly when the breakpoint or the
    reduced-motion preference changes.
    Desktop: labels s1…s6   Mobile: labels m1…m4
    ========================================================================= */
-(function () {
-  "use strict";
-  if (!window.gsap || !window.ScrollTrigger) return;
-  gsap.registerPlugin(ScrollTrigger);
-  // phones: don't re-run refresh when the URL bar shows/hides
-  ScrollTrigger.config({ ignoreMobileResize: true });
+			(function () {
+				"use strict";
+				if (!window.gsap || !window.ScrollTrigger) return;
+				gsap.registerPlugin(ScrollTrigger);
+				// phones: don't re-run refresh when the URL bar shows/hides
+				ScrollTrigger.config({ ignoreMobileResize: true });
 
-  var root = document.querySelector("[data-nv-pr]");
-  if (!root) return;
+				var root = document.querySelector("[data-nv-pr]");
+				if (!root) return;
 
-  var $ = function (s, c) { return (c || root).querySelector(s); };
-  var $$ = function (s, c) { return Array.prototype.slice.call((c || root).querySelectorAll(s)); };
+				var $ = function (s, c) {
+					return (c || root).querySelector(s);
+				};
+				var $$ = function (s, c) {
+					return Array.prototype.slice.call((c || root).querySelectorAll(s));
+				};
 
-  /* ---------------------------------------------------------------------
+				/* ---------------------------------------------------------------------
      Timing grammar (shared by both timelines)
      State k rests at label time (k-1)*STEP. The move from state k to k+1
      runs from label(k)+LEAD for T, so every label sits in the middle of
@@ -571,320 +1394,553 @@ html, body { margin: 0; background: #242424; }
      That stillness is the "hold": snapping lands on a calm frame and a
      slow scroll lingers on each step before the next one starts.
      --------------------------------------------------------------------- */
-  var T = 1, LEAD = 0.3, STEP = 1.6, FADE = 0.5;
-  function lab(k) { return (k - 1) * STEP; }
-  function tStart(k) { return lab(k) + LEAD; }   // transition k → k+1
+				var T = 1,
+					LEAD = 0.3,
+					STEP = 1.6,
+					FADE = 0.5;
+				function lab(k) {
+					return (k - 1) * STEP;
+				}
+				function tStart(k) {
+					return lab(k) + LEAD;
+				} // transition k → k+1
 
-  var DESK = { W: 1159, H: 754, rulerStart: 100, rulerPitch: 959, rulerTop: 277 };
-  var MOB = { W: 382, H: 801 };
-  var mqDesk = window.matchMedia("(min-width: 768px)");
-  var pitchPx = DESK.rulerPitch;
+				var DESK = { W: 1159, H: 754, rulerStart: 100, rulerPitch: 959, rulerTop: 277 };
+				var MOB = { W: 382, H: 801 };
+				var mqDesk = window.matchMedia("(min-width: 768px)");
+				var pitchPx = DESK.rulerPitch;
 
-  /* ---------------------------------------------------------------------
+				/* ---------------------------------------------------------------------
      Layout: scale the fixed-size Figma canvas to the viewport (--nv-s) and
      size the guide-line ruler so it always overhangs both viewport edges,
      including after it has travelled one full pattern width.
      Runs on ScrollTrigger "refreshInit", i.e. before pin/scroll positions
      are measured.
      --------------------------------------------------------------------- */
-  function layout() {
-    var vw = root.clientWidth || window.innerWidth;
-    var vh = root.clientHeight || window.innerHeight;
-    var desk = mqDesk.matches;
-    var W = desk ? DESK.W : MOB.W, H = desk ? DESK.H : MOB.H;
-    var s = Math.min(vw / W, vh / H);
-    root.style.setProperty("--nv-s", s.toFixed(5));
-    if (desk) {
-      pitchPx = DESK.rulerPitch * s;
-      var startX = (vw - DESK.W * s) / 2 + DESK.rulerStart * s; // "Section start line" in px
-      var before = Math.ceil(startX / pitchPx) + 1;              // tiles left of it
-      var after = Math.ceil((vw - startX) / pitchPx) + 2;        // tiles right of it (+1 for travel)
-      root.style.setProperty("--nv-ruler-left", (startX - before * pitchPx) + "px");
-      root.style.setProperty("--nv-ruler-w", (before + after) * pitchPx + "px");
-      // lines start under the header, like Figma (canvas y 277)
-      root.style.setProperty("--nv-ruler-top", Math.round((vh - DESK.H * s) / 2 + DESK.rulerTop * s) + "px");
-      // pattern tile = one start→end span; 3 dashed lines split it evenly.
-      // Whole-pixel x keeps the 1px lines crisp.
-      var pat = document.getElementById("nv-ruler-pat");
-      if (pat) {
-        pat.setAttribute("width", pitchPx);
-        $$(".nv-ruler__dash", pat).forEach(function (r, i) {
-          r.setAttribute("x", Math.round(pitchPx * (i + 1) / 4));
-        });
-      }
-    }
-  }
+				function layout() {
+					var vw = root.clientWidth || window.innerWidth;
+					var vh = root.clientHeight || window.innerHeight;
+					var desk = mqDesk.matches;
+					var W = desk ? DESK.W : MOB.W,
+						H = desk ? DESK.H : MOB.H;
+					var s = Math.min(vw / W, vh / H);
+					root.style.setProperty("--nv-s", s.toFixed(5));
+					if (desk) {
+						pitchPx = DESK.rulerPitch * s;
+						var startX = (vw - DESK.W * s) / 2 + DESK.rulerStart * s; // "Section start line" in px
+						var before = Math.ceil(startX / pitchPx) + 1; // tiles left of it
+						var after = Math.ceil((vw - startX) / pitchPx) + 2; // tiles right of it (+1 for travel)
+						root.style.setProperty("--nv-ruler-left", startX - before * pitchPx + "px");
+						root.style.setProperty("--nv-ruler-w", (before + after) * pitchPx + "px");
+						// lines start under the header, like Figma (canvas y 277)
+						root.style.setProperty("--nv-ruler-top", Math.round((vh - DESK.H * s) / 2 + DESK.rulerTop * s) + "px");
+						// pattern tile = one start→end span; 3 dashed lines split it evenly.
+						// Whole-pixel x keeps the 1px lines crisp.
+						var pat = document.getElementById("nv-ruler-pat");
+						if (pat) {
+							pat.setAttribute("width", pitchPx);
+							$$(".problem-result_ruler_dash", pat).forEach(function (r, i) {
+								r.setAttribute("x", Math.round((pitchPx * (i + 1)) / 4));
+							});
+						}
+					}
+				}
 
-  /* ---------------------------------------------------------------------
+				/* ---------------------------------------------------------------------
      steps(): give an element its value for every resting state and let the
      helper add tweens only where something changes between two states.
      Moves run for the whole transition; fade-outs happen in its first half,
      fade-ins in its second half, so outgoing and incoming items never sit
      on top of each other at full strength.
      --------------------------------------------------------------------- */
-  function steps(tl, el, states) {
-    var full = [], prev = {};
-    states.forEach(function (s) { prev = Object.assign({}, prev, s); full.push(prev); });
-    gsap.set(el, full[0]);
-    for (var k = 1; k < full.length; k++) {
-      var a = full[k - 1], b = full[k], move = {}, moved = false;
-      for (var p in b) {
-        if (p !== "autoAlpha" && b[p] !== a[p]) moved = true;
-      }
-      // when anything moves, tween every transform prop explicitly so GSAP
-      // never re-derives an untouched one (matters for SVG + svgOrigin)
-      if (moved) for (var q in b) if (q !== "autoAlpha") move[q] = b[q];
-      if (moved) tl.to(el, Object.assign(move, { duration: T }), tStart(k));
-      if (b.autoAlpha !== a.autoAlpha) {
-        var fadingIn = b.autoAlpha > a.autoAlpha;
-        tl.to(el, { autoAlpha: b.autoAlpha, duration: FADE }, tStart(k) + (fadingIn ? T - FADE : 0));
-      }
-    }
-  }
-  function range(n, fn) { var out = []; for (var i = 1; i <= n; i++) out.push(fn(i)); return out; }
+				function steps(tl, el, states) {
+					var full = [],
+						prev = {};
+					states.forEach(function (s) {
+						prev = Object.assign({}, prev, s);
+						full.push(prev);
+					});
+					gsap.set(el, full[0]);
+					for (var k = 1; k < full.length; k++) {
+						var a = full[k - 1],
+							b = full[k],
+							move = {},
+							moved = false;
+						for (var p in b) {
+							if (p !== "autoAlpha" && b[p] !== a[p]) moved = true;
+						}
+						// when anything moves, tween every transform prop explicitly so GSAP
+						// never re-derives an untouched one (matters for SVG + svgOrigin)
+						if (moved) for (var q in b) if (q !== "autoAlpha") move[q] = b[q];
+						if (moved) tl.to(el, Object.assign(move, { duration: T }), tStart(k));
+						if (b.autoAlpha !== a.autoAlpha) {
+							var fadingIn = b.autoAlpha > a.autoAlpha;
+							tl.to(el, { autoAlpha: b.autoAlpha, duration: FADE }, tStart(k) + (fadingIn ? T - FADE : 0));
+						}
+					}
+				}
+				function range(n, fn) {
+					var out = [];
+					for (var i = 1; i <= n; i++) out.push(fn(i));
+					return out;
+				}
 
-  /* Problems → Results tab swap (opacity only: bg layer + label) */
-  function tabSwap(tl, scope, at) {
-    var pOn = $(".nv-tab--p .nv-tab__on", scope), rOn = $(".nv-tab--r .nv-tab__on", scope);
-    var pT = $(".nv-tab--p span", scope), rT = $(".nv-tab--r span", scope);
-    gsap.set(pOn, { autoAlpha: 1 }); gsap.set(rOn, { autoAlpha: 0 });
-    gsap.set(pT, { opacity: 1 }); gsap.set(rT, { opacity: 0.5 });
-    tl.to(pOn, { autoAlpha: 0, duration: 0.4 }, at)
-      .to(rOn, { autoAlpha: 1, duration: 0.4 }, at)
-      .to(pT, { opacity: 0.5, duration: 0.4 }, at)
-      .to(rT, { opacity: 1, duration: 0.4 }, at);
-  }
+				/* Problems → Results tab swap (opacity only: bg layer + label) */
+				function tabSwap(tl, scope, at) {
+					var pOn = $('[data-nv-tab="first"] .problem-result_tab_bg', scope),
+						rOn = $('[data-nv-tab="last"] .problem-result_tab_bg', scope);
+					var pT = $('[data-nv-tab="first"] .problem-result_tab_label', scope),
+						rT = $('[data-nv-tab="last"] .problem-result_tab_label', scope);
+					gsap.set(pOn, { autoAlpha: 1 });
+					gsap.set(rOn, { autoAlpha: 0 });
+					gsap.set(pT, { opacity: 1 });
+					gsap.set(rT, { opacity: 0.5 });
+					tl.to(pOn, { autoAlpha: 0, duration: 0.4 }, at).to(rOn, { autoAlpha: 1, duration: 0.4 }, at).to(pT, { opacity: 0.5, duration: 0.4 }, at).to(rT, { opacity: 1, duration: 0.4 }, at);
+				}
 
-  /* =====================================================================
+				/* =====================================================================
      DESKTOP  (s1 intact → s2…s5 cracks + callouts → s6 results)
      ===================================================================== */
-  // Fragment offsets vs their Step-2 position, per step 1…6 (from Figma)
-  var D_FRAG = {
-    "87": [[0, 0], [0, 0], [25.445, 20.557], [25.445, 20.557], [54.451, 37.661], [64.445, 67.557]],
-    "89": [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [4.143, -52.859]],
-    "88": [[0, 0], [0, 0], [25.445, 20.557], [25.445, 20.557], [25.445, 20.557], [10, 45]],
-    "86": [[0, 0], [0, 0], [0, 0], [-25.1, 8.36], [-25.1, 8.36], [-96, 9]]
-  };
-  // Callouts are authored at their Step-5 spot; earlier steps nudge them
-  // so they keep pointing at the crack while the pieces drift apart.
-  var D_APPEAR = { 1: 2, 2: 2, 3: 3, 4: 4, 5: 5, 6: 5 };
-  var D_CO_OFF = { 2: [[-29.445, -20.557], [-29.445, -20.557], [-4, 0], [-4, 0], [0, 0], [0, 0]] };
-  var D_DOT_OFF = {
-    1: [[2, 0], [2, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
-    2: [[-33, -20], [-33, -20], [-7, 0], [-4, 0], [0, 0], [0, 0]],
-    4: [[2, 0], [2, 0], [2, 0], [2, 0], [0, 0], [0, 0]]
-  };
+				// Fragment offsets vs their Step-2 position, per step 1…6 (from Figma)
+				var D_FRAG = {
+					87: [
+						[0, 0],
+						[0, 0],
+						[25.445, 20.557],
+						[25.445, 20.557],
+						[54.451, 37.661],
+						[64.445, 67.557],
+					],
+					89: [
+						[0, 0],
+						[0, 0],
+						[0, 0],
+						[0, 0],
+						[0, 0],
+						[4.143, -52.859],
+					],
+					88: [
+						[0, 0],
+						[0, 0],
+						[25.445, 20.557],
+						[25.445, 20.557],
+						[25.445, 20.557],
+						[10, 45],
+					],
+					86: [
+						[0, 0],
+						[0, 0],
+						[0, 0],
+						[-25.1, 8.36],
+						[-25.1, 8.36],
+						[-96, 9],
+					],
+				};
+				// Callouts are authored at their Step-5 spot; earlier steps nudge them
+				// so they keep pointing at the crack while the pieces drift apart.
+				var D_APPEAR = { 1: 2, 2: 2, 3: 3, 4: 4, 5: 5, 6: 5 };
+				var D_CO_OFF = {
+					2: [
+						[-29.445, -20.557],
+						[-29.445, -20.557],
+						[-4, 0],
+						[-4, 0],
+						[0, 0],
+						[0, 0],
+					],
+				};
+				var D_DOT_OFF = {
+					1: [
+						[2, 0],
+						[2, 0],
+						[0, 0],
+						[0, 0],
+						[0, 0],
+						[0, 0],
+					],
+					2: [
+						[-33, -20],
+						[-33, -20],
+						[-7, 0],
+						[-4, 0],
+						[0, 0],
+						[0, 0],
+					],
+					4: [
+						[2, 0],
+						[2, 0],
+						[2, 0],
+						[2, 0],
+						[0, 0],
+						[0, 0],
+					],
+				};
 
-  function buildDesktop(tl, withRuler) {
-    var N = 6, d = $(".nv-canvas--d");
-    for (var k = 1; k <= N; k++) tl.addLabel("s" + k, lab(k));
-    tl.to({}, { duration: 0 }, lab(N)); // timeline ends exactly on s6
+				function buildDesktop(tl, withRuler) {
+					var N = 6,
+						d = $(".problem-result_canvas.cc-desktop");
+					for (var k = 1; k <= N; k++) tl.addLabel("s" + k, lab(k));
+					tl.to({}, { duration: 0 }, lab(N)); // timeline ends exactly on s6
 
-    // Guide ruler: constant-speed pass of one pattern width (959 Figma px)
-    // across the whole pinned scroll. Function value → re-measured on refresh.
-    if (withRuler) {
-      tl.fromTo($(".nv-ruler"), { x: 0 }, { x: function () { return -pitchPx; }, duration: lab(N), ease: "none" }, 0);
-    }
+					// Guide ruler: constant-speed pass of one pattern width (959 Figma px)
+					// across the whole pinned scroll. Function value → re-measured on refresh.
+					if (withRuler) {
+						tl.fromTo(
+							$(".problem-result_ruler"),
+							{ x: 0 },
+							{
+								x: function () {
+									return -pitchPx;
+								},
+								duration: lab(N),
+								ease: "none",
+							},
+							0,
+						);
+					}
 
-    // s1 → s2: the browser cracks. Fragments fade in over the intact frame
-    // (they line up within ~1px), then the intact copy is dropped so the
-    // gaps between pieces can open from s3 on.
-    var intact = $(".nv-intact", d), frags = $(".nv-frags", d);
-    gsap.set(frags, { autoAlpha: 0 });
-    gsap.set(intact, { autoAlpha: 1 });
-    tl.to(frags, { autoAlpha: 1, duration: FADE }, tStart(1));
-    tl.to(intact, { autoAlpha: 0, duration: 0.3 }, tStart(1) + FADE);
+					// s1 → s2: the browser cracks. Fragments fade in over the intact frame
+					// (they line up within ~1px), then the intact copy is dropped so the
+					// gaps between pieces can open from s3 on.
+					var intact = $(".problem-result_intact", d),
+						frags = $(".problem-result_frags", d);
+					gsap.set(frags, { autoAlpha: 0 });
+					gsap.set(intact, { autoAlpha: 1 });
+					tl.to(frags, { autoAlpha: 1, duration: FADE }, tStart(1));
+					tl.to(intact, { autoAlpha: 0, duration: 0.3 }, tStart(1) + FADE);
 
-    // Fragments drift apart step by step
-    Object.keys(D_FRAG).forEach(function (id) {
-      steps(tl, $('.nv-frag[data-frag="' + id + '"]', d), D_FRAG[id].map(function (o) { return { x: o[0], y: o[1] }; }));
-    });
+					// Fragments drift apart step by step
+					Object.keys(D_FRAG).forEach(function (id) {
+						steps(
+							tl,
+							$('.problem-result_frag[data-frag="' + id + '"]', d),
+							D_FRAG[id].map(function (o) {
+								return { x: o[0], y: o[1] };
+							}),
+						);
+					});
 
-    // Fragment 89's crack side-face only exists once the pieces separate (s3)
-    steps(tl, $(".nv-late", d), range(N, function (i) { return { autoAlpha: i >= 3 ? 1 : 0 }; }));
+					// Fragment 89's crack side-face only exists once the pieces separate (s3)
+					steps(
+						tl,
+						$(".problem-result_frag_face", d),
+						range(N, function (i) {
+							return { autoAlpha: i >= 3 ? 1 : 0 };
+						}),
+					);
 
-    // Problem callouts 1–6: appear at their step, all leave at s6
-    for (var c = 1; c <= 6; c++) {
-      (function (c) {
-        var vis = function (i) { return i >= D_APPEAR[c] && i < 6 ? 1 : 0; };
-        var mk = function (off) {
-          return range(N, function (i) { return { x: off ? off[i - 1][0] : 0, y: off ? off[i - 1][1] : 0, autoAlpha: vis(i) }; });
-        };
-        steps(tl, [$('[data-chip="' + c + '"]', d), $('[data-leader="' + c + '"]', d)], mk(D_CO_OFF[c]));
-        steps(tl, $('[data-dot="' + c + '"]', d), mk(D_DOT_OFF[c]));
-      })(c);
-    }
+					// Problem callouts 1–6: appear at their step, all leave at s6
+					for (var c = 1; c <= 6; c++) {
+						(function (c) {
+							var vis = function (i) {
+								return i >= D_APPEAR[c] && i < 6 ? 1 : 0;
+							};
+							var mk = function (off) {
+								return range(N, function (i) {
+									return { x: off ? off[i - 1][0] : 0, y: off ? off[i - 1][1] : 0, autoAlpha: vis(i) };
+								});
+							};
+							steps(tl, [$('[data-chip="' + c + '"]', d), $('[data-leader="' + c + '"]', d)], mk(D_CO_OFF[c]));
+							steps(tl, $('[data-dot="' + c + '"]', d), mk(D_DOT_OFF[c]));
+						})(c);
+					}
 
-    // s5 → s6: result callouts replace the problem callouts
-    ["low", "comp", "thou", "burn"].forEach(function (c) {
-      steps(tl, [$('[data-chip="' + c + '"]', d), $('[data-leader="' + c + '"]', d), $('[data-dot="' + c + '"]', d)],
-        range(N, function (i) { return { autoAlpha: i === 6 ? 1 : 0 }; }));
-    });
+					// s5 → s6: result callouts replace the problem callouts
+					["low", "comp", "thou", "burn"].forEach(function (c) {
+						steps(
+							tl,
+							[$('[data-chip="' + c + '"]', d), $('[data-leader="' + c + '"]', d), $('[data-dot="' + c + '"]', d)],
+							range(N, function (i) {
+								return { autoAlpha: i === 6 ? 1 : 0 };
+							}),
+						);
+					});
 
-    // s5 → s6: tabs flip to "Results"
-    tabSwap(tl, d, tStart(5) + 0.3);
-  }
+					// s5 → s6: tabs flip to "Results"
+					tabSwap(tl, d, tStart(5) + 0.3);
+				}
 
-  /* =====================================================================
+				/* =====================================================================
      MOBILE  (m1…m3 problems, m4 "What it costs you.")
      ===================================================================== */
-  // [x, y, scale] vs the Step-2 layout; scale is about each fragment's origin
-  var M_FRAG = {
-    "87": [[-4.256, -0.044, 1.06222], [0, 0, 1], [0, 3.574, 1], [24.928, -24.252, 0.8903]],
-    "89": [[0, 1.6085, 1.06222], [0, 0, 1], [0, 3.5742, 1], [8.2207, -63.8645, 0.8903]],
-    "88": [[-7.9925, -8.0525, 1.06222], [0, 0, 1], [0, 3.574, 1], [-3.9395, -27.158, 0.8903]],
-    "86": [[2.6266, 0, 1.06222], [0, 0, 1], [-16.2869, 9, 1], [-62.2714, -25.291, 0.8903]]
-  };
-  var M_DOTS_UPTO = [2, 4, 6, 0]; // highest dot number shown at m1…m4
+				// [x, y, scale] vs the Step-2 layout; scale is about each fragment's origin
+				var M_FRAG = {
+					87: [
+						[-4.256, -0.044, 1.06222],
+						[0, 0, 1],
+						[0, 3.574, 1],
+						[24.928, -24.252, 0.8903],
+					],
+					89: [
+						[0, 1.6085, 1.06222],
+						[0, 0, 1],
+						[0, 3.5742, 1],
+						[8.2207, -63.8645, 0.8903],
+					],
+					88: [
+						[-7.9925, -8.0525, 1.06222],
+						[0, 0, 1],
+						[0, 3.574, 1],
+						[-3.9395, -27.158, 0.8903],
+					],
+					86: [
+						[2.6266, 0, 1.06222],
+						[0, 0, 1],
+						[-16.2869, 9, 1],
+						[-62.2714, -25.291, 0.8903],
+					],
+				};
+				var M_DOTS_UPTO = [2, 4, 6, 0]; // highest dot number shown at m1…m4
 
-  function buildMobile(tl) {
-    var N = 4, m = $(".nv-canvas--m");
-    for (var k = 1; k <= N; k++) tl.addLabel("m" + k, lab(k));
-    tl.to({}, { duration: 0 }, lab(N));
+				function buildMobile(tl) {
+					var N = 4,
+						m = $(".problem-result_canvas.cc-mobile");
+					for (var k = 1; k <= N; k++) tl.addLabel("m" + k, lab(k));
+					tl.to({}, { duration: 0 }, lab(N));
 
-    // Fragments: move + scale about their own origin (svgOrigin 0 0 = the
-    // translate() of the static parent group = fragment's Step-2 origin)
-    // GSAP resolves an SVG transform origin from the element's bounding
-    // box, and this group's bbox includes the un-clipped browser <use>, so
-    // "0 0" isn't reliably the fragment origin. Probe the origin GSAP really
-    // uses (scale 2 → matrix e,f = −origin) and compensate x/y so the result
-    // is exactly  p → scale·p + (x, y)  as measured in Figma.
-    Object.keys(M_FRAG).forEach(function (id) {
-      var el = $('.nv-frag[data-frag="' + id + '"]', m);
-      gsap.set(el, { transformOrigin: "0px 0px", smoothOrigin: false, x: 0, y: 0, scale: 2 });
-      var mx = el.transform.baseVal.consolidate().matrix, ox = -mx.e, oy = -mx.f;
-      gsap.set(el, { scale: 1 });
-      steps(tl, el, M_FRAG[id].map(function (o) {
-        return { x: o[0] - (1 - o[2]) * ox, y: o[1] - (1 - o[2]) * oy, scale: o[2] };
-      }));
-    });
+					// Fragments: move + scale about their own origin (svgOrigin 0 0 = the
+					// translate() of the static parent group = fragment's Step-2 origin)
+					// GSAP resolves an SVG transform origin from the element's bounding
+					// box, and this group's bbox includes the un-clipped browser <use>, so
+					// "0 0" isn't reliably the fragment origin. Probe the origin GSAP really
+					// uses (scale 2 → matrix e,f = −origin) and compensate x/y so the result
+					// is exactly  p → scale·p + (x, y)  as measured in Figma.
+					Object.keys(M_FRAG).forEach(function (id) {
+						var el = $('.problem-result_frag[data-frag="' + id + '"]', m);
+						gsap.set(el, { transformOrigin: "0px 0px", smoothOrigin: false, x: 0, y: 0, scale: 2 });
+						var mx = el.transform.baseVal.consolidate().matrix,
+							ox = -mx.e,
+							oy = -mx.f;
+						gsap.set(el, { scale: 1 });
+						steps(
+							tl,
+							el,
+							M_FRAG[id].map(function (o) {
+								return { x: o[0] - (1 - o[2]) * ox, y: o[1] - (1 - o[2]) * oy, scale: o[2] };
+							}),
+						);
+					});
 
-    // Fragment 89's crack side-face: closed at m1 (= desktop Step 2), open from m2
-    steps(tl, $(".nv-late", m), range(N, function (i) { return { autoAlpha: i >= 2 ? 1 : 0 }; }));
+					// Fragment 89's crack side-face: closed at m1 (= desktop Step 2), open from m2
+					steps(
+						tl,
+						$(".problem-result_frag_face", m),
+						range(N, function (i) {
+							return { autoAlpha: i >= 2 ? 1 : 0 };
+						}),
+					);
 
-    // Number dots ride on their fragment (same desktop spot on the artwork,
-    // ×0.649) but live in a top layer so no piece can cover them and they
-    // never scale: offset = fragment translate + (scale − 1) × local offset.
-    $$("[data-mdot]", m).forEach(function (dot) {
-      var f = M_FRAG[dot.getAttribute("data-frag")];
-      var lx = parseFloat(dot.getAttribute("data-lx")), ly = parseFloat(dot.getAttribute("data-ly"));
-      var n = parseInt(dot.getAttribute("data-mdot"), 10);
-      steps(tl, dot, f.map(function (o, i) {
-        return { x: o[0] + (o[2] - 1) * lx, y: o[1] + (o[2] - 1) * ly, autoAlpha: n <= M_DOTS_UPTO[i] ? 1 : 0 };
-      }));
-    });
+					// Number dots ride on their fragment (same desktop spot on the artwork,
+					// ×0.649) but live in a top layer so no piece can cover them and they
+					// never scale: offset = fragment translate + (scale − 1) × local offset.
+					$$("[data-mdot]", m).forEach(function (dot) {
+						var f = M_FRAG[dot.getAttribute("data-frag")];
+						var lx = parseFloat(dot.getAttribute("data-lx")),
+							ly = parseFloat(dot.getAttribute("data-ly"));
+						var n = parseInt(dot.getAttribute("data-mdot"), 10);
+						steps(
+							tl,
+							dot,
+							f.map(function (o, i) {
+								return { x: o[0] + (o[2] - 1) * lx, y: o[1] + (o[2] - 1) * ly, autoAlpha: n <= M_DOTS_UPTO[i] ? 1 : 0 };
+							}),
+						);
+					});
 
-    // One list per step (crossfade)
-    for (var l = 1; l <= 4; l++) {
-      (function (l) {
-        steps(tl, $('[data-mlist="' + l + '"]', m), range(N, function (i) { return { autoAlpha: i === l ? 1 : 0 }; }));
-      })(l);
-    }
+					// One list per step (crossfade)
+					for (var l = 1; l <= 4; l++) {
+						(function (l) {
+							steps(
+								tl,
+								$('[data-mlist="' + l + '"]', m),
+								range(N, function (i) {
+									return { autoAlpha: i === l ? 1 : 0 };
+								}),
+							);
+						})(l);
+					}
 
-    // Progress bar: one orange segment per problem step; whole bar leaves at m4
-    $$(".nv-progress__on", m).forEach(function (seg) {
-      var s = parseInt(seg.getAttribute("data-seg"), 10);
-      steps(tl, seg, range(N, function (i) { return { autoAlpha: i === s ? 1 : 0 }; }));
-    });
-    var problemsOnly = range(N, function (i) { return { autoAlpha: i < 4 ? 1 : 0 }; });
-    var resultOnly = range(N, function (i) { return { autoAlpha: i === 4 ? 1 : 0 }; });
-    steps(tl, [$(".nv-progress", m), $(".nv-m-frame", m), $(".nv-m-back", m), $(".nv-m-next", m)], problemsOnly);
-    steps(tl, [$(".nv-m-panel", m), $(".nv-m-goback", m)], resultOnly);
+					// Progress bar: one orange segment per problem step; whole bar leaves at m4
+					$$(".problem-result_progress_active", m).forEach(function (seg) {
+						var s = parseInt(seg.getAttribute("data-seg"), 10);
+						steps(
+							tl,
+							seg,
+							range(N, function (i) {
+								return { autoAlpha: i === s ? 1 : 0 };
+							}),
+						);
+					});
+					var problemsOnly = range(N, function (i) {
+						return { autoAlpha: i < 4 ? 1 : 0 };
+					});
+					var resultOnly = range(N, function (i) {
+						return { autoAlpha: i === 4 ? 1 : 0 };
+					});
+					steps(tl, [$(".problem-result_progress", m), $(".problem-result_frame", m), $(".problem-result_back", m), $(".problem-result_next", m)], problemsOnly);
+					steps(tl, [$(".problem-result_panel", m), $(".problem-result_goback", m)], resultOnly);
 
-    // CTA label: "Next Problem" → "Show the Result" on the last problem step
-    steps(tl, $('.nv-m-next__t[data-t="next"]', m), range(N, function (i) { return { autoAlpha: i < 3 ? 1 : 0 }; }));
-    steps(tl, $('.nv-m-next__t[data-t="show"]', m), range(N, function (i) { return { autoAlpha: i >= 3 ? 1 : 0 }; }));
+					// CTA label: "Next Problem" → "Show the Result" on the last problem step
+					steps(
+						tl,
+						$('.problem-result_next_label[data-t="next"]', m),
+						range(N, function (i) {
+							return { autoAlpha: i < 3 ? 1 : 0 };
+						}),
+					);
+					steps(
+						tl,
+						$('.problem-result_next_label[data-t="show"]', m),
+						range(N, function (i) {
+							return { autoAlpha: i >= 3 ? 1 : 0 };
+						}),
+					);
 
-    tabSwap(tl, m, tStart(3) + 0.3);
-  }
+					tabSwap(tl, m, tStart(3) + 0.3);
+				}
 
-  /* ---------------------------------------------------------------------
+				/* ---------------------------------------------------------------------
      Tabs + mobile buttons: jump to a label. With scroll motion
      they scroll to scrollTrigger.labelToScroll(); in reduced motion they
      seek the paused timeline instantly.
      --------------------------------------------------------------------- */
-  function wireButtons(tl, labels, scope) {
-    var st = tl.scrollTrigger;
-    function current() {
-      var t = st ? st.progress * tl.duration() : tl.time(), best = 0;
-      labels.forEach(function (l, i) { if (Math.abs(tl.labels[l] - t) < Math.abs(tl.labels[labels[best]] - t)) best = i; });
-      return best;
-    }
-    function go(i) {
-      i = Math.max(0, Math.min(labels.length - 1, i));
-      if (st) window.scrollTo({ top: st.labelToScroll(labels[i]), behavior: "smooth" });
-      else tl.seek(labels[i]);
-    }
-    var handlers = [
-      // tabs: "Problems" → first step, "Results" → last step
-      [$('[data-nv-tab="first"]', scope), function () { go(0); }],
-      [$('[data-nv-tab="last"]', scope), function () { go(labels.length - 1); }],
-      // mobile step buttons
-      [$("[data-nv-next]", scope), function () { go(current() + 1); }],
-      [$("[data-nv-prev]", scope), function () { go(current() - 1); }],
-      [$("[data-nv-goback]", scope), function () { go(labels.indexOf("m3")); }]
-    ].filter(function (h) { return h[0]; });
-    handlers.forEach(function (h) { h[0].addEventListener("click", h[1]); });
-    return function () { handlers.forEach(function (h) { h[0].removeEventListener("click", h[1]); }); };
-  }
+				function wireButtons(tl, labels, scope) {
+					var st = tl.scrollTrigger;
+					function current() {
+						var t = st ? st.progress * tl.duration() : tl.time(),
+							best = 0;
+						labels.forEach(function (l, i) {
+							if (Math.abs(tl.labels[l] - t) < Math.abs(tl.labels[labels[best]] - t)) best = i;
+						});
+						return best;
+					}
+					function go(i) {
+						i = Math.max(0, Math.min(labels.length - 1, i));
+						if (st) window.scrollTo({ top: st.labelToScroll(labels[i]), behavior: "smooth" });
+						else tl.seek(labels[i]);
+					}
+					var handlers = [
+						// tabs: "Problems" → first step, "Results" → last step
+						[
+							$('[data-nv-tab="first"]', scope),
+							function () {
+								go(0);
+							},
+						],
+						[
+							$('[data-nv-tab="last"]', scope),
+							function () {
+								go(labels.length - 1);
+							},
+						],
+						// mobile step buttons
+						[
+							$("[data-nv-next]", scope),
+							function () {
+								go(current() + 1);
+							},
+						],
+						[
+							$("[data-nv-prev]", scope),
+							function () {
+								go(current() - 1);
+							},
+						],
+						[
+							$("[data-nv-goback]", scope),
+							function () {
+								go(labels.indexOf("m3"));
+							},
+						],
+					].filter(function (h) {
+						return h[0];
+					});
+					handlers.forEach(function (h) {
+						h[0].addEventListener("click", h[1]);
+					});
+					return function () {
+						handlers.forEach(function (h) {
+							h[0].removeEventListener("click", h[1]);
+						});
+					};
+				}
 
-  /* =====================================================================
+				/* =====================================================================
      Breakpoints + reduced motion
      ===================================================================== */
-  var mm = gsap.matchMedia();
-  mm.add({
-    desk: "(min-width: 768px)",
-    mob: "(max-width: 767.98px)",
-    reduce: "(prefers-reduced-motion: reduce)"
-  }, function (ctx) {
-    var desk = ctx.conditions.desk, reduce = ctx.conditions.reduce;
-    var labels = desk ? ["s1", "s2", "s3", "s4", "s5", "s6"] : ["m1", "m2", "m3", "m4"];
-    layout();
+				var mm = gsap.matchMedia();
+				mm.add(
+					{
+						desk: "(min-width: 768px)",
+						mob: "(max-width: 767.98px)",
+						reduce: "(prefers-reduced-motion: reduce)",
+					},
+					function (ctx) {
+						var desk = ctx.conditions.desk,
+							reduce = ctx.conditions.reduce;
+						var labels = desk ? ["s1", "s2", "s3", "s4", "s5", "s6"] : ["m1", "m2", "m3", "m4"];
+						layout();
 
-    var tl = gsap.timeline({
-      paused: reduce,
-      defaults: { ease: "none" },
-      scrollTrigger: reduce ? undefined : {
-        trigger: root,
-        start: "top top",
-        end: function () { return "+=" + Math.round(window.innerHeight * (desk ? 5 : 3)); },
-        pin: true,
-        scrub: 0.5,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        snap: {
-          snapTo: function (v) {
-            var d = tl.duration();
-            return gsap.utils.snap(labels.map(function (l) { return tl.labels[l] / d; }), v);
-          },
-          duration: { min: 0.2, max: 0.6 },
-          delay: 0.08,
-          ease: "power1.inOut",
-          inertia: false // without this a fast flick overshoots to the end
-        }
-      }
-    });
+						var tl = gsap.timeline({
+							paused: reduce,
+							defaults: { ease: "none" },
+							scrollTrigger: reduce
+								? undefined
+								: {
+										trigger: root,
+										start: "top top",
+										end: function () {
+											return "+=" + Math.round(window.innerHeight * (desk ? 5 : 3));
+										},
+										pin: true,
+										scrub: 0.5,
+										anticipatePin: 1,
+										invalidateOnRefresh: true,
+										snap: {
+											snapTo: function (v) {
+												var d = tl.duration();
+												return gsap.utils.snap(
+													labels.map(function (l) {
+														return tl.labels[l] / d;
+													}),
+													v,
+												);
+											},
+											duration: { min: 0.2, max: 0.6 },
+											delay: 0.08,
+											ease: "power1.inOut",
+											inertia: false, // without this a fast flick overshoots to the end
+										},
+									},
+						});
 
-    if (desk) buildDesktop(tl, !reduce); else buildMobile(tl);
+						if (desk) buildDesktop(tl, !reduce);
+						else buildMobile(tl);
 
-    // Reduced motion: no pin, no scrub. Desktop shows Step 5 (all problems
-    // readable); mobile starts at m1 and the buttons switch steps instantly.
-    if (reduce) tl.seek(desk ? "s5" : "m1");
-    var unwire = wireButtons(tl, labels, $(desk ? ".nv-canvas--d" : ".nv-canvas--m"));
+						// Reduced motion: no pin, no scrub. Desktop shows Step 5 (all problems
+						// readable); mobile starts at m1 and the buttons switch steps instantly.
+						if (reduce) tl.seek(desk ? "s5" : "m1");
+						var unwire = wireButtons(tl, labels, $(desk ? ".problem-result_canvas.cc-desktop" : ".problem-result_canvas.cc-mobile"));
 
-    ScrollTrigger.addEventListener("refreshInit", layout);
-    window.addEventListener("resize", layout);
-    return function () {
-      ScrollTrigger.removeEventListener("refreshInit", layout);
-      window.removeEventListener("resize", layout);
-      unwire();
-    };
-  });
+						ScrollTrigger.addEventListener("refreshInit", layout);
+						window.addEventListener("resize", layout);
+						return function () {
+							ScrollTrigger.removeEventListener("refreshInit", layout);
+							window.removeEventListener("resize", layout);
+							unwire();
+						};
+					},
+				);
 
-  // Fonts change text metrics (and the chips' widths): re-measure once loaded
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
-  window.addEventListener("load", function () { ScrollTrigger.refresh(); });
-})();
-</script>
-</body>
+				// Fonts change text metrics (and the chips' widths): re-measure once loaded
+				if (document.fonts && document.fonts.ready)
+					document.fonts.ready.then(function () {
+						ScrollTrigger.refresh();
+					});
+				window.addEventListener("load", function () {
+					ScrollTrigger.refresh();
+				});
+			})();
+		</script>
+	</body>
 </html>
