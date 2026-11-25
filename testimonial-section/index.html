@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Testimonial – Client logos</title>
+  <link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navbar component (skip link is its first child) -->
+
+    <main id="main">
+      <section class="section-testimonial u-spacing-block u-spacing-inline" aria-labelledby="testimonial-title">
+        <div class="container">
+          <h2 class="testimonial_title u-sr-only" id="testimonial-title">What our clients say</h2>
+
+          <!-- Grid: quote + stat are placed explicitly; logo cells auto-fill the remaining slots -->
+          <div class="testimonial_layout" data-logo-shuffle>
+
+            <figure class="testimonial_quote u-position-relative u-display-flex">
+              <svg class="testimonial_quote-mark u-position-absolute" viewBox="0 0 52 36" width="52" height="36" aria-hidden="true" focusable="false">
+                <path d="M0 4a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v14c0 9.5-6 17-15.5 18v-6c3.6-.8 5.9-3.6 6-8H4a4 4 0 0 1-4-4z"/>
+                <path d="M30 4a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v14c0 9.5-6 17-15.5 18v-6c3.6-.8 5.9-3.6 6-8H34a4 4 0 0 1-4-4z"/>
+              </svg>
+
+              <blockquote class="testimonial_quote-text">
+                <p class="testimonial_quote-para u-text-wrap-pretty">&ldquo;Our site finally matches our work. Booked calls <span class="testimonial_highlight">doubled in a month.&rdquo;</span></p>
+              </blockquote>
+
+              <figcaption class="testimonial_author u-display-flex">
+                <div class="testimonial_avatar u-ratio-1 u-overflow-hidden u-flex-shrink-0">
+                  <img class="testimonial_avatar-img u-cover" src="images/avatar-moshfequr.png" alt="" width="32" height="32" loading="lazy">
+                </div>
+                <cite class="testimonial_author-name u-text-sm u-display-flex u-align-items-center">Moshfequr Rahman</cite>
+                <span class="testimonial_author-role u-text-sm u-bg-secondary u-color-secondary u-display-flex u-align-items-center">Founder, Tinyflow</span>
+              </figcaption>
+            </figure>
+
+            <div class="testimonial_stat u-display-flex">
+              <svg class="testimonial_stat-icon u-flex-shrink-0" viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M10.6 16.3 9.3 17.4 2.9 11.2A4.6 4.6 0 0 1 9.3 4.5l.7.7.7-.7a4.6 4.6 0 0 1 6.9 6"/>
+                <path d="M15.5 11.6c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z"/>
+              </svg>
+              <span class="testimonial_stat-divider u-flex-shrink-0" aria-hidden="true"></span>
+              <dl class="testimonial_stat-list">
+                <dt class="testimonial_stat-label u-text-sm">Increase conversion rate in</dt>
+                <dd class="testimonial_stat-value">28.3%</dd>
+              </dl>
+            </div>
+
+            <!-- Visible logo slots (also the no-JS fallback) -->
+            <div class="testimonial_logo-cell u-display-flex u-align-items-center u-justify-content-center u-overflow-hidden" data-logo-slot>
+              <img class="testimonial_logo" src="images/logos/likemax.png" alt="Likemax" width="103" height="26">
+            </div>
+            <div class="testimonial_logo-cell u-display-flex u-align-items-center u-justify-content-center u-overflow-hidden" data-logo-slot>
+              <img class="testimonial_logo" src="images/logos/tinyflow.png" alt="Tinyflow" width="98" height="22">
+            </div>
+            <div class="testimonial_logo-cell u-display-flex u-align-items-center u-justify-content-center u-overflow-hidden" data-logo-slot>
+              <img class="testimonial_logo" src="images/logos/thunderclap.png" alt="Thunderclap" width="119" height="14">
+            </div>
+            <div class="testimonial_logo-cell u-display-flex u-align-items-center u-justify-content-center u-overflow-hidden" data-logo-slot>
+              <img class="testimonial_logo" src="images/logos/bannerbakers.png" alt="BannerBakers" width="145" height="18">
+            </div>
+
+            <!-- Full logo pool the shuffle draws from (inert until JS reads it) -->
+            <template class="testimonial_logo-pool" data-logo-pool>
+              <img src="images/logos/likemax.png" alt="Likemax" width="103" height="26">
+              <img src="images/logos/tinyflow.png" alt="Tinyflow" width="98" height="22">
+              <img src="images/logos/thunderclap.png" alt="Thunderclap" width="119" height="14">
+              <img src="images/logos/bannerbakers.png" alt="BannerBakers" width="145" height="18">
+              <img src="images/logos/clerked.png" alt="Clerked" width="112" height="20">
+              <img src="images/logos/designmonks.png" alt="Designmonks" width="122" height="22">
+              <img src="images/logos/vonome.png" alt="Vonome" width="117" height="24">
+              <img src="images/logos/beetle-beetle.png" alt="Beetle Beetle" width="64" height="33">
+              <img src="images/logos/wavespace.png" alt="Wavespace" width="116" height="18">
+              <img src="images/logos/sustain-zone.png" alt="Sustain Zone" width="126" height="18">
+              <img src="images/logos/dc-atlas.png" alt="DC Atlas" width="90" height="22">
+            </template>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer component -->
+  </div>
+</body>
+</html>
